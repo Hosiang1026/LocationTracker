@@ -1,4 +1,4 @@
-package com.ljs.location2mqtt;
+package com.ljs.locationtracker;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

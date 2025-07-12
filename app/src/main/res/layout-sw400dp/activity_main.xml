@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:fitsSystemWindows="true">
+    android:background="@color/white">
 
     <!-- 头部 -->
     <LinearLayout
@@ -12,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/header_gradient"
-        android:padding="15dp"
+        android:padding="20dp"
         android:gravity="center">
 
         <TextView
@@ -21,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="@string/app_title"
             android:textColor="@color/white"
-            android:textSize="22sp"
+            android:textSize="26sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -31,17 +30,17 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="15dp">
+        android:padding="20dp">
 
         <!-- 状态监控面板 -->
         <ScrollView
             android:id="@+id/status_panel"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
-        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent">
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <!-- 实时状态 -->
@@ -50,9 +49,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/real_time_status"
                     android:textColor="@color/primary_green"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="15dp" />
+                    android:layout_marginBottom="20dp" />
 
                 <GridLayout
                     android:layout_width="match_parent"
@@ -69,7 +68,7 @@
                         android:layout_columnWeight="1"
                         android:orientation="vertical"
                         android:background="@drawable/status_card_background"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:gravity="center">
 
                         <TextView
@@ -77,9 +76,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/connection_status"
                             android:textColor="@color/primary_green"
-                            android:textSize="12sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="6dp" />
+                            android:layout_marginBottom="8dp" />
 
                         <TextView
                             android:id="@+id/tv_connection_status"
@@ -87,7 +86,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/connected"
                             android:textColor="@color/success_green"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                     </LinearLayout>
@@ -99,7 +98,7 @@
                         android:layout_columnWeight="1"
                         android:orientation="vertical"
                         android:background="@drawable/status_card_background"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:gravity="center">
 
                         <TextView
@@ -107,29 +106,29 @@
                             android:layout_height="wrap_content"
                             android:text="@string/location_status"
                             android:textColor="@color/primary_green"
-                            android:textSize="12sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="6dp" />
+                            android:layout_marginBottom="8dp" />
 
-            <TextView
+                        <TextView
                             android:id="@+id/tv_location_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/running"
                             android:textColor="@color/info_blue"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                     </LinearLayout>
 
                     <!-- 电池电量 -->
                     <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:orientation="vertical"
                         android:background="@drawable/status_card_background"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:gravity="center">
 
                         <TextView
@@ -137,9 +136,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/battery_level"
                             android:textColor="@color/primary_green"
-                            android:textSize="12sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="6dp" />
+                            android:layout_marginBottom="8dp" />
 
                         <TextView
                             android:id="@+id/tv_battery_level"
@@ -147,19 +146,19 @@
                             android:layout_height="wrap_content"
                             android:text="85%"
                             android:textColor="@color/warning_orange"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                     </LinearLayout>
 
                     <!-- 上报次数 -->
                     <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:orientation="vertical"
                         android:background="@drawable/status_card_background"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:gravity="center">
 
                         <TextView
@@ -167,9 +166,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/report_count"
                             android:textColor="@color/primary_green"
-                            android:textSize="12sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="6dp" />
+                            android:layout_marginBottom="8dp" />
 
                         <TextView
                             android:id="@+id/tv_report_count"
@@ -177,29 +176,29 @@
                             android:layout_height="wrap_content"
                             android:text="1,247"
                             android:textColor="@color/purple_accent"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
-        </LinearLayout>
+                    </LinearLayout>
 
                 </GridLayout>
 
                 <!-- 运行日志 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="15dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="@string/operation_log"
                         android:textColor="@color/primary_green"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <Button
@@ -208,11 +207,11 @@
                         android:layout_height="wrap_content"
                         android:text="🛠️ 日志"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:background="@drawable/start_button_background"
-                        android:padding="8dp"
-                        android:minWidth="60dp"
-                        android:layout_marginEnd="8dp" />
+                        android:padding="12dp"
+                        android:minWidth="80dp"
+                        android:layout_marginEnd="12dp" />
 
                     <Button
                         android:id="@+id/btn_copy_log"
@@ -220,19 +219,19 @@
                         android:layout_height="wrap_content"
                         android:text="📋 复制"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:background="@drawable/start_button_background"
-                        android:padding="8dp"
-                        android:minWidth="60dp" />
+                        android:padding="12dp"
+                        android:minWidth="80dp" />
 
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_logs"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="400dp"
                     android:background="@color/log_background"
-                    android:padding="8dp"
+                    android:padding="12dp"
                     android:clipToPadding="false"
                     android:scrollbars="vertical" />
 
@@ -257,7 +256,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="25dp">
+                    android:layout_marginBottom="30dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -265,7 +264,7 @@
                         android:layout_weight="1"
                         android:text="@string/enable_notification"
                         android:textColor="@color/text_primary"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <Switch
@@ -282,9 +281,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/webhook_url"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="15dp" />
 
                 <EditText
                     android:id="@+id/txtUrl"
@@ -294,9 +293,9 @@
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/text_disabled"
                     android:textSize="16sp"
-                    android:padding="16dp"
+                    android:padding="18dp"
                     android:background="@drawable/edit_text_background"
-                    android:layout_marginBottom="25dp" />
+                    android:layout_marginBottom="30dp" />
 
                 <!-- 更新周期 -->
                 <TextView
@@ -304,9 +303,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/update_interval"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="15dp" />
 
                 <EditText
                     android:id="@+id/txtTime"
@@ -318,9 +317,9 @@
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/text_disabled"
                     android:textSize="16sp"
-                    android:padding="16dp"
+                    android:padding="18dp"
                     android:background="@drawable/edit_text_background"
-                    android:layout_marginBottom="25dp" />
+                    android:layout_marginBottom="30dp" />
 
                 <!-- 开始定位按钮 -->
                 <Button
@@ -329,12 +328,12 @@
                     android:layout_height="wrap_content"
                     android:text="@string/start_location"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:background="@drawable/start_button_background"
-                    android:padding="15dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp" />
+                    android:padding="18dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp" />
 
                 <!-- 设备优化按钮 -->
                 <Button
@@ -343,11 +342,11 @@
                     android:layout_height="wrap_content"
                     android:text="优化设置"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:background="@drawable/start_button_background"
-                    android:padding="15dp"
-                    android:layout_marginBottom="25dp" />
+                    android:padding="18dp"
+                    android:layout_marginBottom="30dp" />
 
                 <!-- 配置说明 -->
                 <LinearLayout
@@ -355,8 +354,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:background="@drawable/info_box_background"
-                    android:padding="20dp"
-                    android:layout_marginBottom="20dp">
+                    android:padding="25dp"
+                    android:layout_marginBottom="25dp">
 
                     <TextView
                         android:id="@+id/lblHaconfig"
@@ -364,8 +363,8 @@
                         android:layout_height="wrap_content"
                         android:text="@string/config_description"
                         android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
-                        android:lineSpacingExtra="4dp" />
+                        android:textSize="16sp"
+                        android:lineSpacingExtra="6dp" />
 
                 </LinearLayout>
 
@@ -380,20 +379,20 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/background_gray"
-        android:padding="8dp">
+        android:padding="12dp">
 
         <Button
             android:id="@+id/btn_status_tab"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="6dp"
             android:text="📊 监控"
             android:textColor="@color/tab_text_color"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:background="@drawable/tab_button_background"
-            android:padding="15dp"
+            android:padding="18dp"
             android:stateListAnimator="@null" />
 
         <Button
@@ -401,15 +400,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="6dp"
             android:text="⚙️ 配置"
             android:textColor="@color/tab_text_color"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:background="@drawable/tab_button_background"
-            android:padding="15dp"
+            android:padding="18dp"
             android:stateListAnimator="@null" />
 
     </LinearLayout>
 
-</LinearLayout>
+</LinearLayout> 

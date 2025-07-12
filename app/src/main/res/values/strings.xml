@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Location2Mqtt</string>
+    <string name="app_name">位置上报</string>
     <string name="title_activity_setting">Setting</string>
     <!--
     This string is used for square devices and overridden by hello_world in
@@ -37,4 +37,41 @@
     <string name="start">开始</string>
     <string name="notificaEnable">开启通知</string>
     <string name="instruction">降低app被杀死概率</string>
+
+    <!-- 新增UI预览中的文本 -->
+    <string name="app_title">手机位置上报</string>
+    <string name="app_subtitle">狂欢马克思</string>
+    <string name="status_monitor">状态监控</string>
+    <string name="config_panel">配置面板</string>
+    <string name="real_time_status">实时状态</string>
+    <string name="connection_status">网络状态</string>
+    <string name="location_status">定位状态</string>
+    <string name="battery_level">电池电量</string>
+    <string name="report_count">上报次数</string>
+    <string name="connected">已连接</string>
+    <string name="disconnected">未连接</string>
+    <string name="running">运行中</string>
+    <string name="stopped">已停止</string>
+    <string name="operation_log">运行日志</string>
+    <string name="webhook_url">上报地址</string>
+    <string name="update_interval">更新周期(秒)</string>
+    <string name="enable_notification">开启通知</string>
+    <string name="start_location">开始定位</string>
+    <string name="monitor_tab">监控</string>
+    <string name="config_tab">配置</string>
+    <string name="config_description">配置说明：\n1. 上报地址: 填入你的webhook地址\n2. 更新周期: 定位上报间隔（秒）\n3. 开启通知: 保持应用在后台运行\n\n数据格式示例：\n{\"latitude\": 37.7749, \"longitude\": -122.4194, \"speed\": 30, \"battery\": 75}\n\nAPP版本：V2.1.4   开发者：狂欢马克思</string>
+    <string name="webhook_url_hint">https://your-webhook-url.com</string>
+    <string name="fill_required">填写项不能为空</string>
+    <string name="invalid_url">请输入有效的URL地址</string>
+    <string name="invalid_interval">时间间隔必须在10-3600秒之间</string>
+    <string name="invalid_format">时间间隔格式不正确</string>
+    <string name="service_started">服务已启动</string>
+    <string name="save_failed">保存配置失败</string>
+    <string name="permission_required">需要定位和网络权限才能正常使用</string>
+    <string name="device_optimization">设备优化设置</string>
+    <string name="permission_guide_title">权限设置引导</string>
+    <string name="permission_guide_message">为了确保应用正常运行，建议开启以下权限：\n\n• 定位权限：获取位置信息\n• 自启动权限：保持后台运行\n• 通知权限：显示运行状态</string>
+    <string name="go_to_settings">前往设置</string>
+    <string name="later">稍后设置</string>
+    <string name="dont_remind">不再提醒</string>
 </resources>

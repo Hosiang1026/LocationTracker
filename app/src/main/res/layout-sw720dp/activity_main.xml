@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:fitsSystemWindows="true">
+    android:background="@color/white">
 
     <!-- 头部 -->
     <LinearLayout
@@ -12,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/header_gradient"
-        android:padding="15dp"
+        android:padding="8dp"
         android:gravity="center">
 
         <TextView
@@ -21,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="@string/app_title"
             android:textColor="@color/white"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -31,17 +30,17 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="15dp">
+        android:padding="8dp">
 
         <!-- 状态监控面板 -->
         <ScrollView
             android:id="@+id/status_panel"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
-        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <!-- 实时状态 -->
@@ -57,8 +56,8 @@
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:rowCount="2"
+                    android:columnCount="4"
+                    android:rowCount="1"
                     android:alignmentMode="alignMargins"
                     android:useDefaultMargins="true">
 
@@ -69,7 +68,7 @@
                         android:layout_columnWeight="1"
                         android:orientation="vertical"
                         android:background="@drawable/status_card_background"
-                        android:padding="12dp"
+                        android:padding="8dp"
                         android:gravity="center">
 
                         <TextView
@@ -77,9 +76,9 @@
                             android:layout_height="wrap_content"
                             android:text="@string/connection_status"
                             android:textColor="@color/primary_green"
-                            android:textSize="12sp"
+                            android:textSize="10sp"
                             android:textStyle="bold"
-                            android:layout_marginBottom="6dp" />
+                            android:layout_marginBottom="4dp" />
 
                         <TextView
                             android:id="@+id/tv_connection_status"
@@ -87,7 +86,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/connected"
                             android:textColor="@color/success_green"
-                            android:textSize="18sp"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
 
                     </LinearLayout>
@@ -111,7 +110,7 @@
                             android:textStyle="bold"
                             android:layout_marginBottom="6dp" />
 
-            <TextView
+                        <TextView
                             android:id="@+id/tv_location_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -124,8 +123,8 @@
 
                     <!-- 电池电量 -->
                     <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:orientation="vertical"
                         android:background="@drawable/status_card_background"
@@ -154,8 +153,8 @@
 
                     <!-- 上报次数 -->
                     <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:orientation="vertical"
                         android:background="@drawable/status_card_background"
@@ -180,23 +179,23 @@
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-        </LinearLayout>
+                    </LinearLayout>
 
                 </GridLayout>
 
                 <!-- 运行日志 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="@string/operation_log"
                         android:textColor="@color/primary_green"
                         android:textSize="16sp"
@@ -230,7 +229,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_logs"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="300dp"
                     android:background="@color/log_background"
                     android:padding="8dp"
                     android:clipToPadding="false"
@@ -250,6 +249,93 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <!-- Webhook URL 和 更新周期 一行显示 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="25dp">
+
+                    <!-- Webhook URL -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp"
+                        android:gravity="start">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/webhook_url"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="10dp" />
+
+                        <EditText
+                            android:id="@+id/txtUrl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/webhook_url_hint"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_disabled"
+                            android:textSize="15sp"
+                            android:padding="14dp"
+                            android:background="@drawable/edit_text_background" />
+
+                    </LinearLayout>
+
+                    <!-- 更新周期 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:orientation="vertical"
+                        android:layout_marginStart="8dp"
+                        android:gravity="start">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/update_interval"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="10dp" />
+
+                        <EditText
+                            android:id="@+id/txtTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="60"
+                            android:text="60"
+                            android:inputType="number"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_disabled"
+                            android:textSize="15sp"
+                            android:padding="14dp"
+                            android:background="@drawable/edit_text_background" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- 开始定位按钮 -->
+                <Button
+                    android:id="@+id/btnStart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_location"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/start_button_background"
+                    android:padding="18dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp" />
 
                 <!-- 通知开关 -->
                 <LinearLayout
@@ -275,79 +361,6 @@
                         android:checked="false" />
 
                 </LinearLayout>
-
-                <!-- Webhook URL -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/webhook_url"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
-
-                <EditText
-                    android:id="@+id/txtUrl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/webhook_url_hint"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_disabled"
-                    android:textSize="16sp"
-                    android:padding="16dp"
-                    android:background="@drawable/edit_text_background"
-                    android:layout_marginBottom="25dp" />
-
-                <!-- 更新周期 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/update_interval"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
-
-                <EditText
-                    android:id="@+id/txtTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="60"
-                    android:text="60"
-                    android:inputType="number"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_disabled"
-                    android:textSize="16sp"
-                    android:padding="16dp"
-                    android:background="@drawable/edit_text_background"
-                    android:layout_marginBottom="25dp" />
-
-                <!-- 开始定位按钮 -->
-                <Button
-                    android:id="@+id/btnStart"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/start_location"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/start_button_background"
-                    android:padding="15dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp" />
-
-                <!-- 设备优化按钮 -->
-                <Button
-                    android:id="@+id/btn_device_optimization"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="优化设置"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/start_button_background"
-                    android:padding="15dp"
-                    android:layout_marginBottom="25dp" />
 
                 <!-- 配置说明 -->
                 <LinearLayout
@@ -412,4 +425,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</LinearLayout> 

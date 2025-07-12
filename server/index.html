@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocationTracker 多设备配置管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #007cba 0%, #005a8b 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007cba;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .devices-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #007cba;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #005a8b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 124, 186, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .device-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .device-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .device-card.online {
+            border-left: 4px solid #28a745;
+        }
+        
+        .device-card.offline {
+            border-left: 4px solid #dc3545;
+            opacity: 0.7;
+        }
+        
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .device-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .device-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .device-info {
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .info-label {
+            color: #666;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .device-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007cba;
+        }
+        
+        .help-text {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 3px;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007cba;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .devices-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📍 LocationTracker</h1>
+            <p>多设备配置管理面板</p>
+        </div>
+        
+        <div class="content">
+            <!-- 统计信息 -->
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDevices">0</div>
+                    <div class="stat-label">总设备数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="onlineDevices">0</div>
+                    <div class="stat-label">在线设备</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="offlineDevices">0</div>
+                    <div class="stat-label">离线设备</div>
+                </div>
+            </div>
+            
+            <!-- 设备列表 -->
+            <div class="devices-section">
+                <div class="section-header">
+                    <h2 class="section-title">设备管理</h2>
+                    <button class="btn btn-primary" onclick="refreshDevices()">
+                        🔄 刷新
+                    </button>
+                </div>
+                
+                <div id="devicesGrid" class="devices-grid">
+                    <div class="device-card">
+                        <div class="device-header">
+                            <div class="device-name">加载中...</div>
+                            <div class="device-status status-offline">离线</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="status"></div>
+        </div>
+    </div>
+    
+    <!-- 设备配置模态框 -->
+    <div id="deviceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeviceModal()">&times;</span>
+            <h3 id="modalTitle">设备配置</h3>
+            
+            <form id="deviceConfigForm">
+                <div class="form-group">
+                    <label>设备名称</label>
+                    <input type="text" id="deviceName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>🌐 Webhook URL</label>
+                    <input type="url" id="webhookUrl" placeholder="https://nas.haoxiang.eu.org/locationtracker/webhook/endpoint" required>
+                    <div class="help-text">数据上报的目标地址，建议使用HTTPS</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>⏱️ 更新间隔 (秒)</label>
+                    <input type="number" id="updateInterval" min="10" max="10800" value="600" required>
+                    <div class="help-text">范围：10-10800秒（10秒-3小时），建议60-300秒</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>🔔 通知开关</label>
+                    <select id="notificationEnabled">
+                        <option value="true">开启</option>
+                        <option value="false">关闭</option>
+                    </select>
+                    <div class="help-text">控制前台通知显示，关闭后服务仍在后台运行</div>
+                </div>
+                
+                <div class="device-actions">
+                    <button type="submit" class="btn btn-primary">
+                        💾 保存配置
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeDeviceModal()">
+                        取消
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin + '/locationtracker/api/config';
+        let currentDeviceId = null;
+        
+        // 显示状态信息
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+        
+        // 显示加载状态
+        function showLoading(button, text) {
+            button.innerHTML = `<span class="loading"></span>${text}`;
+            button.disabled = true;
+        }
+        
+        // 隐藏加载状态
+        function hideLoading(button, text) {
+            button.innerHTML = text;
+            button.disabled = false;
+        }
+        
+        // 格式化时间
+        function formatTime(timestamp) {
+            if (!timestamp) return '从未在线';
+            const date = new Date(timestamp);
+            return date.toLocaleString('zh-CN');
+        }
+        
+        // 加载设备列表
+        async function loadDevices() {
+            try {
+                const response = await fetch(API_BASE_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                displayDevices(data.devices);
+                updateStats(data);
+                
+            } catch (error) {
+                console.error('加载设备列表失败:', error);
+                showStatus(`❌ 加载设备列表失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 显示设备列表
+        function displayDevices(devices) {
+            const grid = document.getElementById('devicesGrid');
+            
+            if (devices.length === 0) {
+                grid.innerHTML = `
+                    <div class="device-card">
+                        <div class="device-header">
+                            <div class="device-name">暂无设备</div>
+                        </div>
+                        <div class="device-info">
+                            <div class="info-row">
+                                <span class="info-label">状态:</span>
+                                <span class="info-value">等待设备连接</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = devices.map(device => `
+                <div class="device-card ${device.is_online ? 'online' : 'offline'}">
+                    <div class="device-header">
+                        <div class="device-name">${device.device_name}</div>
+                        <div class="device-status ${device.is_online ? 'status-online' : 'status-offline'}">
+                            ${device.is_online ? '在线' : '离线'}
+                        </div>
+                    </div>
+                    
+                    <div class="device-info">
+                        <div class="info-row">
+                            <span class="info-label">设备ID:</span>
+                            <span class="info-value">${device.device_id}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Webhook URL:</span>
+                            <span class="info-value">${device.webhook_url || '未配置'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">更新间隔:</span>
+                            <span class="info-value">${device.update_interval}秒</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">最后在线:</span>
+                            <span class="info-value">${formatTime(device.last_seen)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="device-actions">
+                        <button class="btn btn-primary" onclick="editDevice('${device.device_id}')">
+                            ✏️ 编辑
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteDevice('${device.device_id}')">
+                            🗑️ 删除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 更新统计信息
+        function updateStats(data) {
+            document.getElementById('totalDevices').textContent = data.total_devices;
+            document.getElementById('onlineDevices').textContent = data.online_devices;
+            document.getElementById('offlineDevices').textContent = data.total_devices - data.online_devices;
+        }
+        
+        // 刷新设备列表
+        function refreshDevices() {
+            const refreshBtn = document.querySelector('.btn-primary');
+            showLoading(refreshBtn, '刷新中...');
+            loadDevices().finally(() => {
+                hideLoading(refreshBtn, '🔄 刷新');
+            });
+        }
+        
+        // 编辑设备配置
+        async function editDevice(deviceId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${deviceId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const config = await response.json();
+                currentDeviceId = deviceId;
+                
+                // 填充表单
+                document.getElementById('modalTitle').textContent = `编辑设备: ${config.device_name}`;
+                document.getElementById('deviceName').value = config.device_name;
+                document.getElementById('webhookUrl').value = config.webhook_url || '';
+                document.getElementById('updateInterval').value = config.update_interval || 600;
+                document.getElementById('notificationEnabled').value = config.notification_enabled ? 'true' : 'false';
+                
+                // 显示模态框
+                document.getElementById('deviceModal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('加载设备配置失败:', error);
+                showStatus(`❌ 加载设备配置失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 删除设备
+        async function deleteDevice(deviceId) {
+            if (!confirm('确定要删除这个设备吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/${deviceId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                showStatus('✅ 设备已删除', 'success');
+                loadDevices();
+                
+            } catch (error) {
+                console.error('删除设备失败:', error);
+                showStatus(`❌ 删除设备失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 保存设备配置
+        async function saveDeviceConfig(config) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${currentDeviceId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(config)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+                
+                showStatus('✅ 设备配置已保存', 'success');
+                closeDeviceModal();
+                loadDevices();
+                
+            } catch (error) {
+                console.error('保存设备配置失败:', error);
+                showStatus(`❌ 保存设备配置失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 关闭模态框
+        function closeDeviceModal() {
+            document.getElementById('deviceModal').style.display = 'none';
+            currentDeviceId = null;
+        }
+        
+        // 表单提交处理
+        document.getElementById('deviceConfigForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const config = {
+                device_name: document.getElementById('deviceName').value.trim(),
+                webhook_url: document.getElementById('webhookUrl').value.trim(),
+                update_interval: parseInt(document.getElementById('updateInterval').value),
+                notification_enabled: document.getElementById('notificationEnabled').value === 'true'
+            };
+            
+            await saveDeviceConfig(config);
+        });
+        
+        // 页面加载时获取设备列表
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDevices();
+        });
+        
+        // 定期刷新设备列表（每30秒）
+        setInterval(loadDevices, 30000);
+    </script>
+</body>
+</html> 

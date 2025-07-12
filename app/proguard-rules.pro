@@ -19,3 +19,43 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 保留应用主类
+-keep class com.ljs.LocationTracker.MainActivity { *; }
+-keep class com.ljs.LocationTracker.ltmService { *; }
+-keep class com.ljs.LocationTracker.LocationForcegroundService { *; }
+-keep class com.ljs.LocationTracker.BootBroadcastReceiver { *; }
+-keep class com.ljs.LocationTracker.CheckPermissionsActivity { *; }
+-keep class com.ljs.LocationTracker.DataBaseOpenHelper { *; }
+-keep class com.ljs.LocationTracker.LogAdapter { *; }
+-keep class com.ljs.LocationTracker.Contant { *; }
+-keep class com.ljs.LocationTracker.Utils { *; }
+-keep class com.ljs.LocationTracker.FlowLayout { *; }
+
+# 保留Android组件
+-keep class * extends android.app.Activity { *; }
+-keep class * extends android.app.Service { *; }
+-keep class * extends android.content.BroadcastReceiver { *; }
+-keep class * extends android.app.Application { *; }
+
+# 保留布局和资源
+-keep class **.R$* { *; }
+
+# 保留JSON相关
+-keep class org.json.** { *; }
+
+# 保留OkHttp相关
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+
+# 移除未使用的代码
+-dontwarn android.support.**
+-dontwarn androidx.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
+
+# 优化
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
+-optimizationpasses 5
+-allowaccessmodification

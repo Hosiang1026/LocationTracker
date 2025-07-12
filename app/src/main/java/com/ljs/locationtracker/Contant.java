@@ -1,4 +1,4 @@
-package com.ljs.location2mqtt;
+package com.ljs.locationtracker;
 
 public class Contant {
     public static  final String DATABASE="ltm.db";

@@ -10,4 +10,27 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- 新增UI预览中的颜色 -->
+    <color name="primary_green">#4CAF50</color>
+    <color name="primary_green_dark">#45a049</color>
+    <color name="success_green">#2ecc71</color>
+    <color name="info_blue">#3498db</color>
+    <color name="warning_orange">#f39c12</color>
+    <color name="purple_accent">#9b59b6</color>
+    <color name="error_red">#e74c3c</color>
+    <color name="dark_gray">#2c3e50</color>
+    <color name="light_gray">#ecf0f1</color>
+    <color name="border_gray">#e0e0e0</color>
+    <color name="background_gray">#f8f9fa</color>
+    <color name="background_light">#ffffff</color>
+    <color name="border_light">#e0e0e0</color>
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_disabled">#999999</color>
+    <color name="gradient_start">#667eea</color>
+    <color name="gradient_end">#764ba2</color>
+    <color name="log_background">#2c3e50</color>
+    <color name="log_text">#ecf0f1</color>
+    <color name="tab_text_color">#666666</color>
 </resources>

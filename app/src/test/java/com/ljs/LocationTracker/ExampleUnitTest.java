@@ -1,4 +1,4 @@
-package com.ljs.location2mqtt;
+package com.ljs.locationtracker;
 
 import org.junit.Test;
 

@@ -1,0 +1,7 @@
+# LocationTracker 本地配置模板
+KEYSTORE_PASSWORD=你的签名密码
+KEY_ALIAS=你的key别名
+KEY_PASSWORD=你的key密码
+CONFIG_URL=你的配置服务器地址
+HEARTBEAT_URL=你的心跳地址
+WEBHOOK_URL=你的webhook地址 
