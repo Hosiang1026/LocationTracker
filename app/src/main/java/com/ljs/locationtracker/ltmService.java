@@ -41,13 +41,18 @@ import okhttp3.Response;
 import java.net.SocketTimeoutException;
 import javax.net.ssl.SSLHandshakeException;
 
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import java.util.concurrent.TimeUnit;
+
 public class ltmService extends Service {
     public static String HOST = "";
     //服务器内置主题，用来监测当前服务器上连接的客户端数量（$SYS/broker/clients/connected）
     public static String TOPIC1 = "location/myphone";
-    private static String clientid = "client15";
-    private String userName = "";
-    private String passWord = "";
+    private static String clientid = BuildConfig.CLIENT_ID;
+    private String userName = BuildConfig.MQTT_USERNAME;
+    private String passWord = BuildConfig.MQTT_PASSWORD;
     private String TAG = "ljstag";
     private int time = 0;
 
@@ -85,6 +90,23 @@ public class ltmService extends Service {
     
     // 立即上报广播接收器
     private BroadcastReceiver immediateReportReceiver = null;
+
+    private static final String LOCATION_WORK_NAME = "LocationPeriodicWork";
+    private void startLocationWorker(long intervalSeconds) {
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+            LocationWorker.class, intervalSeconds, TimeUnit.SECONDS)
+            .build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            LOCATION_WORK_NAME,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest
+        );
+        sendLogBroadcast("已启动 WorkManager 定时定位任务，周期: " + intervalSeconds + "秒", "INFO");
+    }
+    private void stopLocationWorker() {
+        WorkManager.getInstance(this).cancelUniqueWork(LOCATION_WORK_NAME);
+        sendLogBroadcast("已停止 WorkManager 定时定位任务", "INFO");
+    }
 
     public ltmService() {
     }
@@ -282,7 +304,8 @@ public class ltmService extends Service {
             }
             
             // 设置保活定时器，定期检查服务状态
-            startKeepAliveTimer();
+            // startKeepAliveTimer();
+            startLocationWorker(time);
             
         if(isSartLocation) {
             //如果使用{@link AMapLocationClient#enableBackgroundLocation(int, Notification)}，这段代码可以不要
@@ -520,6 +543,7 @@ public class ltmService extends Service {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         Log.d(TAG, "onCreate:");
         
         try {
@@ -575,7 +599,20 @@ public class ltmService extends Service {
             sendLogBroadcast("服务创建失败: " + e.getMessage(), "ERROR");
         }
         
-        super.onCreate();
+        // 注册省电模式变化广播
+        if (Build.VERSION.SDK_INT >= 21) {
+            IntentFilter powerSaveFilter = new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
+            registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    boolean powerSave = isPowerSaveMode();
+                    long newInterval = powerSave ? Math.max(time * 2, 600) : time;
+                    stopLocationWorker();
+                    startLocationWorker(newInterval);
+                    sendLogBroadcast("省电模式变化，WorkManager 周期调整为 " + newInterval + " 秒", "INFO");
+                }
+            }, powerSaveFilter);
+        }
     }
 
     @Override
@@ -620,7 +657,7 @@ public class ltmService extends Service {
                 Log.e(TAG, "注销立即上报广播接收器失败", e);
             }
         }
-        
+        stopLocationWorker();
         super.onDestroy();
     }
 

@@ -2,46 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ljs.locationtracker">
 
+    <!-- 保留核心权限 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
-    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
-    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
-    <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
-    <!-- <uses-permission android:name="android.permission.DEVICE_POWER" /> -->
-    <!-- <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 需要运行时注册的权限 -->
-    <!-- 用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 用于访问GPS定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 用于提高GPS定位速度 -->
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" /> <!-- 写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据 -->
-    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> --> <!-- 读取缓存数据 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 用于读取手机当前的状态 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 更改设置 -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" /> <!-- 3.2.0版本增加 -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- 3.2.0版本增加 -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    
-    <!-- Android 13+ 通知权限 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- 荣耀/华为手机特殊权限 -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    
-    <!-- 荣耀/华为手机自启动权限 -->
-    <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT" />
-    <uses-permission android:name="com.huawei.permission.sec.MDM" />
-    <uses-permission android:name="com.huawei.permission.sec.MDM_INTERNAL" />
+    <!-- 省略蓝牙、系统窗口、华为等特殊权限 -->
 
     <application
         android:name=".LocationTrackerApplication"
@@ -59,8 +33,8 @@
         <service
             android:name=".LocationForcegroundService"
             android:foregroundServiceType="location"
-            android:process=":location"
-            android:priority="1000" />
+            android:enabled="true"
+            android:exported="false" />
 
         <activity 
             android:name=".CheckPermissionsActivity"
@@ -72,7 +46,6 @@
             android:name=".BootBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
-            android:process=":location"
             android:priority="1000">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -102,8 +75,7 @@
         <service
             android:name=".ConfigSyncService"
             android:enabled="true"
-            android:exported="false"
-            android:process=":location" />
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
