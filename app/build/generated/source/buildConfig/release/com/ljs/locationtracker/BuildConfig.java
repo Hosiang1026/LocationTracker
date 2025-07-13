@@ -10,9 +10,9 @@ public final class BuildConfig {
   public static final int VERSION_CODE = 4;
   public static final String VERSION_NAME = "2.1.4";
   // Field from default config.
-  public static final String CONFIG_URL = "https://ha.haoxiang.eu.org/locationtracker/api/config";
+  public static final String CONFIG_URL = "https://wrong-url.com/api/config";
   // Field from default config.
-  public static final String HEARTBEAT_URL = "https://ha.haoxiang.eu.org/locationtracker/api/config/heartbeat";
+  public static final String HEARTBEAT_URL = "https://wrong-url.com/api/heartbeat";
   // Field from default config.
-  public static final String WEBHOOK_URL = "https://ha.haoxiang.eu.org/api/webhook/8612f073252c388571fc029559caadd3b5336db3aaec7d98be698e7e1e236a83";
+  public static final String WEBHOOK_URL = "https://wrong-url.com/api/webhook ";
 }
