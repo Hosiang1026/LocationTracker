@@ -1,4 +1,5 @@
 # LocationTracker 本地配置模板
+sdk.dir=你的本地安卓SDK路径
 KEYSTORE_PASSWORD=你的签名密码
 KEY_ALIAS=你的key别名
 KEY_PASSWORD=你的key密码
