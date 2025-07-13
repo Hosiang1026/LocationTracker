@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.hx.locationtracker.debug",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "versionCode": 215,
+      "versionName": "2.1.5",
+      "outputFile": "LocationTracker-debug-v2.1.5.apk"
+    }
+  ]
+}

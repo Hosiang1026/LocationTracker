@@ -21,16 +21,16 @@
 #-renamesourcefileattribute SourceFile
 
 # 保留应用主类
--keep class com.ljs.LocationTracker.MainActivity { *; }
--keep class com.ljs.LocationTracker.ltmService { *; }
--keep class com.ljs.LocationTracker.LocationForcegroundService { *; }
--keep class com.ljs.LocationTracker.BootBroadcastReceiver { *; }
--keep class com.ljs.LocationTracker.CheckPermissionsActivity { *; }
--keep class com.ljs.LocationTracker.DataBaseOpenHelper { *; }
--keep class com.ljs.LocationTracker.LogAdapter { *; }
--keep class com.ljs.LocationTracker.Contant { *; }
--keep class com.ljs.LocationTracker.Utils { *; }
--keep class com.ljs.LocationTracker.FlowLayout { *; }
+-keep class com.ljs.location2mqtt.MainActivity { *; }
+-keep class com.ljs.location2mqtt.ltmService { *; }
+-keep class com.ljs.location2mqtt.LocationForcegroundService { *; }
+-keep class com.ljs.location2mqtt.BootBroadcastReceiver { *; }
+-keep class com.ljs.location2mqtt.CheckPermissionsActivity { *; }
+-keep class com.ljs.location2mqtt.DataBaseOpenHelper { *; }
+-keep class com.ljs.location2mqtt.LogAdapter { *; }
+-keep class com.ljs.location2mqtt.Contant { *; }
+-keep class com.ljs.location2mqtt.Utils { *; }
+-keep class com.ljs.location2mqtt.FlowLayout { *; }
 
 # 保留Android组件
 -keep class * extends android.app.Activity { *; }

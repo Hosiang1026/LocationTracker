@@ -8,7 +8,10 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
+/keystore
+/server
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+RELEASE_SIGNING_INFO.md
