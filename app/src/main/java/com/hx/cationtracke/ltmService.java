@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 import android.Manifest;
 import android.app.Service;
@@ -46,7 +46,8 @@ import androidx.work.WorkManager;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import java.util.concurrent.TimeUnit;
 import android.app.Notification;
-
+import com.hx.cationtracke.LocationTrackerApplication;
+import com.hx.cationtracke.DataBaseOpenHelper;
 
 
 public class ltmService extends Service {
@@ -621,6 +622,19 @@ public class ltmService extends Service {
         stopLocation();
     }
 
+    // 安全停止定位监听
+    private void stopLocationUpdates() {
+        if (locationManager != null && locationListener != null) {
+            try {
+                locationManager.removeUpdates(locationListener);
+            } catch (Exception e) {
+                Log.e(TAG, "停止定位监听失败", e);
+            }
+        }
+        isSartLocation = false;
+        isLocationRunning = false;
+    }
+
     @Override
     public void onCreate() {
         synchronized (INSTANCE_LOCK) {
@@ -670,7 +684,7 @@ public class ltmService extends Service {
         
         sendLogBroadcast("位置服务已销毁", "INFO");
         
-        Intent  intent=new Intent("com.ljs.locationtracker.start");
+        Intent  intent=new Intent("com.hx.cationtracke.start");
         sendBroadcast(intent);
         
         // 注销立即上报广播接收器
@@ -978,6 +992,8 @@ public class ltmService extends Service {
             String locationStatus;
             if (isLowBattery) {
                 locationStatus = "低电量暂停";
+            } else if (isStaticState) {
+                locationStatus = "静止中";
             } else {
                 locationStatus = isLocationRunning ? getString(R.string.running) : getString(R.string.stopped);
             }
@@ -1467,10 +1483,132 @@ public class ltmService extends Service {
         }
     }
     
+    // 新增静止/运动检测和智能定位策略
+    // 1. 静止判定结合速度和距离
+    private static final int STATIC_THRESHOLD = 10; // 静止判定距离（米）
+    private static final int STATIC_COUNT_LIMIT = 3; // 连续静止次数
+    private static final float STATIC_SPEED_THRESHOLD = 0.5f; // 静止判定速度（m/s）
+    private Location lastLocation = null;
+    private int staticCount = 0;
+    private boolean isMoving = true;
+    private long lastStrategyCheckTime = 0;
+    private long lastForegroundSwitchTime = 0;
+    private static final long FOREGROUND_MIN_DURATION_MS = 30000; // 前台最小驻留30秒
+    private boolean lastNightState = false;
+    private boolean isStaticState = false;
+
+    private boolean isNight() {
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        int hour = c.get(java.util.Calendar.HOUR_OF_DAY);
+        return (hour >= 22 || hour < 8);
+    }
+
+    // 2. 夜间/白天切换点主动触发策略检查
+    private void checkNightSwitch() {
+        boolean night = isNight();
+        if (night != lastNightState) {
+            lastNightState = night;
+            sendLogBroadcast("检测到夜间/白天切换，主动刷新定位策略", "INFO");
+            if (lastLocation != null) {
+                updateLocationStrategy(lastLocation);
+            }
+        }
+    }
+
+    private void updateLocationStrategy(Location location) {
+        // 1. 静止/运动判定（结合速度和距离）
+        boolean isStatic = false;
+        if (lastLocation != null) {
+            float distance = location.distanceTo(lastLocation);
+            float speed = location.getSpeed();
+            if (distance < STATIC_THRESHOLD && speed < STATIC_SPEED_THRESHOLD) {
+                staticCount++;
+            } else {
+                staticCount = 0;
+            }
+            isStatic = staticCount >= STATIC_COUNT_LIMIT;
+            isMoving = !isStatic;
+        } else {
+            isMoving = true;
+        }
+        lastLocation = location;
+
+        // 2. 判断夜间/白天
+        boolean night = isNight();
+        boolean powerSave = isPowerSaveMode();
+        int interval = time;
+        if (powerSave) interval = time * 3;
+        String provider = null;
+        if (night) {
+            provider = LocationManager.NETWORK_PROVIDER;
+        } else {
+            // 白天优先GPS，若不可用则用网络
+            if (locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                provider = LocationManager.GPS_PROVIDER;
+            } else if (locationManager != null && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                sendLogBroadcast("GPS不可用，使用WLAN/移动网络定位", "WARNING");
+                provider = LocationManager.NETWORK_PROVIDER;
+            } else {
+                provider = LocationManager.PASSIVE_PROVIDER;
+            }
+        }
+
+        // 3. 静止时不上报，停止定位
+        if (!isMoving) {
+            isStaticState = true;
+            stopLocationWorker();
+            stopLocationUpdates();
+            sendLogBroadcast((night ? "夜间" : "白天") + "静止，暂停定位上报", "INFO");
+            // 前台服务去抖动：至少驻留30秒
+            long now = System.currentTimeMillis();
+            if (now - lastForegroundSwitchTime > FOREGROUND_MIN_DURATION_MS) {
+                stopForeground(true);
+                lastForegroundSwitchTime = now;
+            }
+            return;
+        } else {
+            isStaticState = false;
+        }
+
+        // 4. 运动时，按策略启动定位
+        stopLocationWorker();
+        stopLocationUpdates();
+        startLocationWorker(interval);
+        if (provider != null) {
+            startLocationUpdatesWithProvider(provider, interval);
+            sendLogBroadcast((night ? "夜间" : "白天") + "运动，使用" + (provider.equals(LocationManager.GPS_PROVIDER) ? "GPS" : provider.equals(LocationManager.NETWORK_PROVIDER) ? "网络" : "被动") + "定位，周期" + interval + "秒", "INFO");
+        } else {
+            sendLogBroadcast("无可用定位Provider，无法启动定位", "ERROR");
+        }
+        // 保持前台服务，去抖动
+        long now = System.currentTimeMillis();
+        if (notification_enable == 1 && notificationService != null) {
+            if (now - lastForegroundSwitchTime > FOREGROUND_MIN_DURATION_MS) {
+                startForeground(Utils.NOTIFY_ID, Utils.buildNotification(getApplicationContext(), 0, 0, 0, 0, 0));
+                lastForegroundSwitchTime = now;
+            }
+        }
+    }
+
+    // 新增：带provider和interval的定位启动
+    private void startLocationUpdatesWithProvider(String provider, int interval) {
+        try {
+            if (locationManager != null && locationListener != null) {
+                locationManager.removeUpdates(locationListener);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates(provider, interval * 1000L, 0, locationListener);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "智能策略启动定位失败", e);
+        }
+    }
+
     /**
      * 处理位置更新
      */
     private void handleLocationUpdate(Location location) {
+        updateLocationStrategy(location);
         try {
             // 检查电量状态
             checkBatteryStatus();

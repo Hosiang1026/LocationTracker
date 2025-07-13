@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -39,14 +39,20 @@ import java.util.Random;
 
 import android.app.ActivityManager;
 
-import com.ljs.locationtracker.DeviceOptimizationHelper;
-import com.ljs.locationtracker.DeviceOptimizationHelper.DeviceBrand;
+import com.hx.cationtracke.DeviceOptimizationHelper;
+import com.hx.cationtracke.DeviceOptimizationHelper.DeviceBrand;
 
 import android.content.res.Configuration;
 import android.os.PowerManager;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+
+import com.hx.cationtracke.LogAdapter;
+import com.hx.cationtracke.DataBaseOpenHelper;
+import com.hx.cationtracke.PermissionGuideDialog;
+import com.hx.cationtracke.ltmService;
+import com.hx.cationtracke.LocationTrackerApplication;
 
 public class MainActivity extends AppCompatActivity {
     private EditText txtWebhookUrl, txtTime;
@@ -62,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
     String TAG="LJSTAG";
     
     // 广播动作常量
-    public static final String ACTION_STATUS_UPDATE = "com.ljs.locationtracker.STATUS_UPDATE";
-    public static final String ACTION_LOG_UPDATE = "com.ljs.locationtracker.LOG_UPDATE";
+    public static final String ACTION_STATUS_UPDATE = "com.hx.cationtracke.STATUS_UPDATE";
+    public static final String ACTION_LOG_UPDATE = "com.hx.cationtracke.LOG_UPDATE";
     public static final String EXTRA_CONNECTION_STATUS = "connection_status";
     public static final String EXTRA_LOCATION_STATUS = "location_status";
     public static final String EXTRA_BATTERY_LEVEL = "battery_level";
@@ -1034,7 +1040,7 @@ public class MainActivity extends AppCompatActivity {
                     logAdapter.addLog("位置服务启动中...", "INFO");
             
             // 立即上报一次
-            Intent immediateReportIntent = new Intent("com.ljs.locationtracker.IMMEDIATE_REPORT");
+            Intent immediateReportIntent = new Intent("com.hx.cationtracke.IMMEDIATE_REPORT");
             sendBroadcast(immediateReportIntent);
                     
                     // 切换到状态面板
@@ -1394,7 +1400,7 @@ public class MainActivity extends AppCompatActivity {
                     logAdapter.addLog("触发立即位置上报...", "INFO");
                     
                     // 发送立即上报的广播
-                    Intent immediateReportIntent = new Intent("com.ljs.locationtracker.IMMEDIATE_REPORT");
+                    Intent immediateReportIntent = new Intent("com.hx.cationtracke.IMMEDIATE_REPORT");
                     sendBroadcast(immediateReportIntent);
                     
                     logAdapter.addLog("立即上报广播已发送", "SUCCESS");

@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
 import androidx.core.app.NotificationCompat;
+import com.hx.cationtracke.LocationTrackerApplication;
 
 public class Utils {
     public static final int NOTIFY_ID = 2001;

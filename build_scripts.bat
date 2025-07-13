@@ -95,8 +95,8 @@ dir %OUTPUT_DIR%
 
 echo.
 echo 📱 包名信息:
-echo    Release版本包名: com.ljs.locationtracker.v%VERSION_NAME%
-echo    Debug版本包名: com.ljs.locationtracker.debug
+echo    Release版本包名: com.hx.cationtracke.v%VERSION_NAME%
+echo    Debug版本包名: com.hx.cationtracke.debug
 echo.
 echo 💡 提示:
 echo    - Release版本已签名，可直接发布

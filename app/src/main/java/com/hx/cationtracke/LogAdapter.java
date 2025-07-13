@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import com.hx.cationtracke.LocationTrackerApplication;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     private List<LogEntry> logEntries = new ArrayList<>();

@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 import android.content.Context;
 import android.location.Location;
@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import java.util.ArrayList;
+import com.hx.cationtracke.DataBaseOpenHelper;
 
 public class LocationWorker extends Worker {
     public LocationWorker(@NonNull Context context, @NonNull WorkerParameters params) {
