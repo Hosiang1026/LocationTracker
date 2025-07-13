@@ -8,7 +8,7 @@
 
 [![Android版本](https://img.shields.io/badge/Android-4.0+-green.svg)](https://developer.android.com/about/versions/android-4.0)
 [![版本号](https://img.shields.io/badge/版本-V2.1.5-blue.svg)](https://github.com/your-repo/LocationTracker/releases)
-[![界面设计](https://img.shields.io/badge/界面-单面板设计-brightgreen.svg)](https://haoxiang.eu.org/ui/UI_PREVIEW)
+[![手机界面](https://img.shields.io/badge/手机界面-单面板设计-brightgreen.svg)](https://haoxiang.eu.org/ui/MOBILE_UI_PREVIEW)
 [![平板界面](https://img.shields.io/badge/平板界面-大屏优化-blue.svg)](https://haoxiang.eu.org/ui/TABLET_UI_PREVIEW)
 [![主题兼容](https://img.shields.io/badge/主题-智能兼容-orange.svg)](https://github.com/your-repo/LocationTracker#-主题兼容性修复详情)
 
@@ -50,7 +50,7 @@
 
 ## 🎨 界面预览
 
-> 💡 **快速预览**: [📱 手机端界面](https://haoxiang.eu.org/ui/UI_PREVIEW) | [📟 平板端界面](https://haoxiang.eu.org/ui//TABLET_UI_PREVIEW)
+> 💡 **快速预览**: [📱 手机端界面](https://haoxiang.eu.org/ui/MOBILE_UI_PREVIEW) | [📟 平板端界面](https://haoxiang.eu.org/ui//TABLET_UI_PREVIEW)
 
 ### 📱 手机端特性
 - **单面板设计**: 底部TAB切换，界面简洁统一
@@ -380,6 +380,9 @@ cp local.properties.example local.properties
 
 2. **编辑local.properties文件**:
 ```properties
+# SDK路径
+sdk.dir=你的本地安卓SDK路径
+
 # 签名配置（Release版本必需）
 KEYSTORE_PASSWORD=你的签名密码
 KEY_ALIAS=你的key别名
@@ -560,6 +563,11 @@ WEBHOOK_URL=你的webhook地址
 ## 📝 更新日志
 
 ### V2.1.5
+- 🧹 **代码清理**: 移除所有MQTT相关代码和配置
+- 📱 **版本更新**: 从V2.1.4升级到V2.1.5
+- 🔧 **配置优化**: 简化构建配置，移除无用依赖
+- 📝 **文档更新**: 更新版本号和功能说明
+- 🛠️ **ProGuard优化**: 更新包名引用规则
 - 全面优化 UI 细节，提升用户体验：
   - Webhook/周期输入框增加详细提示（hint），说明格式和范围
   - 按钮防抖处理，防止多次点击"开始"导致重复启动
@@ -570,6 +578,15 @@ WEBHOOK_URL=你的webhook地址
 - 全局异常捕获，防止App崩溃并本地保存崩溃日志，异常时友好提示用户
 - Webhook URL、上报周期等输入校验更严格，防止无效配置
 - 其它细节体验优化和Bug修复
+
+### 清理内容
+- ❌ 移除MQTT_USERNAME配置
+- ❌ 移除MQTT_PASSWORD配置
+- ❌ 移除CLIENT_ID配置
+- ❌ 移除TOPIC1变量
+- ❌ 移除clientid、userName、passWord变量
+- ❌ 移除MQTT相关字符串资源
+- ✅ 更新ProGuard规则包名引用
 
 ### V2.1.4
 - ✨ **透明状态栏功能**: 实现沉浸式状态栏效果，标题上方的状态栏变为透明

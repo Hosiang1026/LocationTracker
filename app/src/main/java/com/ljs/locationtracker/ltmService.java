@@ -48,11 +48,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ltmService extends Service {
     public static String HOST = "";
-    //服务器内置主题，用来监测当前服务器上连接的客户端数量（$SYS/broker/clients/connected）
-    public static String TOPIC1 = "location/myphone";
-    private static String clientid = BuildConfig.CLIENT_ID;
-    private String userName = BuildConfig.MQTT_USERNAME;
-    private String passWord = BuildConfig.MQTT_PASSWORD;
     private String TAG = "ljstag";
     private int time = 0;
 

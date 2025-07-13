@@ -26,9 +26,6 @@ android {
         buildConfigField "String", "CONFIG_URL", '"' + (localProps["CONFIG_URL"] ?: "https://nas.haoxiang.eu.org/locationtracker/api/config") + '"'
         buildConfigField "String", "HEARTBEAT_URL", '"' + (localProps["HEARTBEAT_URL"] ?: "https://nas.haoxiang.eu.org/locationtracker/api/config/heartbeat") + '"'
         buildConfigField "String", "WEBHOOK_URL", '"' + (localProps["WEBHOOK_URL"] ?: "https://ha.haoxiang.eu.org/api/webhook/db72ebc1627e52685ca64cdb3807dfbc61cf1876c0ce0f5eafecb975b577609b") + '"'
-        buildConfigField "String", "CLIENT_ID", '"' + (localProps["CLIENT_ID"] ?: "client15") + '"'
-        buildConfigField "String", "MQTT_USERNAME", '"' + (localProps["MQTT_USERNAME"] ?: "") + '"'
-        buildConfigField "String", "MQTT_PASSWORD", '"' + (localProps["MQTT_PASSWORD"] ?: "") + '"'
     }
 
     signingConfigs {
