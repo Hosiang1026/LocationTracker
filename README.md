@@ -8,7 +8,7 @@
 
 [![Android版本](https://img.shields.io/badge/Android-4.0+-green.svg)](https://developer.android.com/about/versions/android-4.0)
 [![版本号](https://img.shields.io/badge/版本-V2.1.5-blue.svg)](https://github.com/your-repo/LocationTracker/releases)
-[![界面设计](https://img.shields.io/badge/界面-单面板设计-brightgreen.svg)](https://haoxiang.eu.org/ui/UI_PREVIEW)
+[![界面设计](https://img.shields.io/badge/界面-单面板设计-brightgreen.svg)](https://haoxiang.eu.org/ui/MOBILE_UI_PREVIEW)
 [![平板界面](https://img.shields.io/badge/平板界面-大屏优化-blue.svg)](https://haoxiang.eu.org/ui/TABLET_UI_PREVIEW)
 [![主题兼容](https://img.shields.io/badge/主题-智能兼容-orange.svg)](https://github.com/your-repo/LocationTracker#-主题兼容性修复详情)
 
@@ -50,7 +50,7 @@
 
 ## 🎨 界面预览
 
-> 💡 **快速预览**: [📱 手机端界面](https://haoxiang.eu.org/ui/UI_PREVIEW) | [📟 平板端界面](https://haoxiang.eu.org/ui//TABLET_UI_PREVIEW)
+> 💡 **快速预览**: [📱 手机端界面](https://haoxiang.eu.org/ui/MOBILE_UI_PREVIEW) | [📟 平板端界面](https://haoxiang.eu.org/ui//TABLET_UI_PREVIEW)
 
 ### 📱 手机端特性
 - **单面板设计**: 底部TAB切换，界面简洁统一
