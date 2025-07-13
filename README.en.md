@@ -12,7 +12,7 @@
 [![Tablet UI](https://img.shields.io/badge/Tablet%20UI-Large%20Screen%20Optimized-blue.svg)](https://haoxiang.eu.org/ui/TABLET_UI_PREVIEW)
 [![Theme Compatibility](https://img.shields.io/badge/Theme-Smart%20Compatibility-orange.svg)](https://github.com/your-repo/LocationTracker#-theme-compatibility-fix-details)
 
-> 📱 **Smart Location Reporting App** - Send location data to Home Assistant or other servers via HTTP Webhook
+> 📱 **Smart Location Reporting App** - Send location data to Home Assistant or other servers via HTTP Webhook (Pure HTTP Webhook application, no MQTT functionality)
 
 ## 🚨 Important Notice
 
@@ -560,6 +560,11 @@ If you have questions or suggestions, please contact through:
 ## 📝 Changelog
 
 ### V2.1.5
+- 🧹 **Code Cleanup**: Removed all MQTT-related code and configurations
+- 📱 **Version Update**: Upgraded from V2.1.4 to V2.1.5
+- 🔧 **Configuration Optimization**: Simplified build configuration, removed unused dependencies
+- 📝 **Documentation Update**: Updated version number and feature descriptions
+- 🛠️ **ProGuard Optimization**: Updated package name reference rules
 - Comprehensive UI detail optimization, improved user experience:
   - Webhook/cycle input boxes added detailed hints, explaining format and range
   - Button debounce processing, prevent multiple "Start" clicks causing duplicate startup
@@ -570,6 +575,15 @@ If you have questions or suggestions, please contact through:
 - Global exception capture, prevent app crashes and locally save crash logs, friendly prompts when exceptions occur
 - Webhook URL, reporting cycle and other input validation more strict, prevent invalid configuration
 - Other detail experience optimizations and bug fixes
+
+### Cleanup Details
+- ❌ Removed MQTT_USERNAME configuration
+- ❌ Removed MQTT_PASSWORD configuration
+- ❌ Removed CLIENT_ID configuration
+- ❌ Removed TOPIC1 variable
+- ❌ Removed clientid, userName, passWord variables
+- ❌ Removed MQTT-related string resources
+- ✅ Updated ProGuard rules package name references
 
 ### V2.1.4
 - ✨ **Transparent Status Bar Feature**: Implement immersive status bar effect, status bar above title becomes transparent
