@@ -48,8 +48,6 @@ import android.os.PowerManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-import android.content.SharedPreferences;
-
 public class MainActivity extends AppCompatActivity {
     private EditText txtWebhookUrl, txtTime;
     private Button btnStart, btnStatusTab, btnConfigTab, btnCopyLog, btnDeviceOptimization;
@@ -72,12 +70,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_REPORT_COUNT = "report_count";
     public static final String EXTRA_LOG_MESSAGE = "log_message";
     public static final String EXTRA_LOG_TYPE = "log_type";
-    
-    private static final long START_BTN_DEBOUNCE_INTERVAL = 2000; // 2秒防抖
-    private long lastStartClickTime = 0;
-    
-    private static final String PREFS_NAME = "app_prefs";
-    private static final String KEY_DEVICE_OPT_DIALOG_SHOWN = "device_opt_dialog_shown";
     
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -581,20 +573,7 @@ public class MainActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        long now = System.currentTimeMillis();
-                        if (now - lastStartClickTime < START_BTN_DEBOUNCE_INTERVAL) {
-                            Toast.makeText(MainActivity.this, "请勿频繁点击开始", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        lastStartClickTime = now;
-                        btnStart.setEnabled(false);
                         startLocationService();
-                        btnStart.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                btnStart.setEnabled(true);
-                            }
-                        }, START_BTN_DEBOUNCE_INTERVAL);
                     }
                 });
             }
@@ -1340,19 +1319,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "logAdapter为null，无法显示设备信息");
             }
             
-            // 只在首次启动时自动弹出优化建议
-            SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-            boolean shown = prefs.getBoolean(KEY_DEVICE_OPT_DIALOG_SHOWN, false);
-            if (!shown) {
-                new Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        PermissionGuideDialog.showDeviceOptimizationDialog(MainActivity.this, brand);
-                        // 标记已弹出
-                        prefs.edit().putBoolean(KEY_DEVICE_OPT_DIALOG_SHOWN, true).apply();
-                    }
-                }, 3000);
-            }
+            // 显示设备优化对话框（延迟3秒，避免与权限申请对话框冲突）
+            new Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PermissionGuideDialog.showDeviceOptimizationDialog(MainActivity.this, brand);
+                }
+            }, 3000);
+            
             // 应用设备优化策略
             DeviceOptimizationHelper.applyDeviceOptimization(this);
             

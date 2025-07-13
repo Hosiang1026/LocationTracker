@@ -1,4 +1,10 @@
-# LocationTracker
+<p align="right">
+  <b>中文</b> | <a href="./README.en.md">英文</a>
+</p>
+
+---
+
+# 智能位置上报
 
 [![Android版本](https://img.shields.io/badge/Android-4.0+-green.svg)](https://developer.android.com/about/versions/android-4.0)
 [![版本号](https://img.shields.io/badge/版本-V2.1.5-blue.svg)](https://github.com/your-repo/LocationTracker/releases)
@@ -6,7 +12,7 @@
 [![平板界面](https://img.shields.io/badge/平板界面-大屏优化-blue.svg)](./TABLET_UI_PREVIEW.html)
 [![主题兼容](https://img.shields.io/badge/主题-智能兼容-orange.svg)](https://github.com/your-repo/LocationTracker#-主题兼容性修复详情)
 
-> 📱 **智能位置上报应用** - 通过HTTP Webhook将位置数据发送到Home Assistant或其他服务器
+> 📱 **智能位置上报应用** - 通过HTTP Webhook将安卓设备位置数据发送到Home Assistant或其他服务器
 
 ## 🚨 重要提醒
 
@@ -28,64 +34,23 @@
 3. 授予必要权限
 4. 配置Webhook URL（支持 http/https，格式校验，不能为空）
 5. 配置上报周期（10~10800秒，不能为空，超范围校验）
-6. 点击"开始定位"即可使用，支持一键恢复默认配置
+6. 点击"开始定位"即可使用
 
 ### ⚡ 核心功能
 - 📍 **实时定位**: GPS/网络定位，精确位置上报
-- 🔄 **智能上报**: 位置变化检测，避免无效上报
-- 🔋 **电量保护**: 低电量自动暂停，保护设备电池
+- 🔄 **数据去重**: 避免重复上报相同位置数据
+- 🔋 **低电量保护**: 电量低于10%时自动暂停上报
 - 🌙 **后台保活**: 开机自启动，服务自动重启
-- 🎨 **界面优化**: 透明状态栏，Material Design设计
+- 🎨 **透明状态栏**: 支持Android 4.4+透明状态栏
 - 🛡️ **全局异常捕获**: 崩溃自动记录日志并友好提示
-- 📝 **输入校验增强**: Webhook/周期等输入严格校验，防止无效配置
-- 🖥️ **多分辨率/夜间模式适配**: 所有屏幕和主题下体验一致
-- 🛠️ **一键恢复默认**: 配置面板支持一键恢复默认设置
-
-## 🧑‍💻 用户体验与易用性优化
-
-- 输入框详细提示（hint），说明格式和范围
-- “恢复默认”按钮，快速还原推荐配置
-- 按钮防抖，防止重复点击导致异常
-- 所有输入和操作错误均有明确 Toast 提示
-- 服务启动/停止、上报成功/失败等操作有明显 UI 反馈
-- 夜间模式/高对比度适配，保证不同主题下界面清晰
-- 多分辨率适配，所有优化同步到各屏幕布局
-
-## 📊 兼容性支持
-
-### 🖥️ 屏幕尺寸
-| 设备类型 | 屏幕尺寸 | 分辨率范围 | 界面布局 | 触摸优化 | 状态栏 | 典型设备举例 |
-|---------|---------|-----------|---------|---------|--------|-------------|
-| **小屏手机** | 4.0-4.7英寸 | 480x800-720x1280 | ✅ 紧凑布局 | ✅ 标准尺寸 | ✅ 完全透明 | 小米4 (5.0")、华为P8 (5.2")、三星Galaxy S5 (5.1") |
-| **标准手机** | 5.0-6.0英寸 | 720x1280-1080x1920 | ✅ 单面板设计 | ✅ 标准尺寸 | ✅ 完全透明 | 华为P40 (6.1")、小米12 (6.28")、OPPO Find X3 (6.7") |
-| **大屏手机** | 6.1-6.7英寸 | 1080x1920-1440x3200 | ✅ 单面板设计 | ✅ 标准尺寸 | ✅ 完全透明 | 华为Mate 50 Pro (6.74")、小米13 Ultra (6.73")、vivo X90 Pro+ (6.78") |
-| **小屏平板** | 7.0-8.0英寸 | 1024x768-1200x1920 | ✅ 优化布局 | ✅ 大尺寸按钮 | ✅ 完全透明 | 华为平板M6 (8.4")、小米平板4 (8.0")、三星Galaxy Tab A (8.0") |
-| **标准平板** | 8.5-10.5英寸 | 1200x1920-1600x2560 | ✅ 优化布局 | ✅ 大尺寸按钮 | ✅ 完全透明 | 华为MatePad Pro (10.8")、小米平板5 (11")、OPPO Pad (11") |
-| **大屏平板** | 11.0-12.9英寸 | 1600x2560-2048x2732 | ✅ 大屏适配 | ✅ 超大尺寸按钮 | ✅ 完全透明 | 华为MatePad Pro 12.6"、小米平板6 Pro (11") |
-| **折叠屏** | 展开6.7-8.0英寸 | 1080x1920-2208x1768 | ✅ 自适应布局 | ✅ 智能尺寸 | ✅ 完全透明 | 三星Galaxy Fold (7.6")、华为Mate X (8.0")、小米MIX Fold (8.01") |
-| **车载/大屏** | 10.0-15.0英寸 | 1920x1080-2560x1440 | ✅ 大屏适配 | ✅ 超大尺寸按钮 | ✅ 完全透明 | 车载Android系统、智能大屏设备、Android TV |
-
-### 🤖 Android版本
-| 功能 | Android 4.0-4.3 | Android 4.4-4.4W | Android 5.0+ | Android 10+ |
-|------|------------------|-------------------|--------------|-------------|
-| **基础定位** | ✅ 支持 | ✅ 支持 | ✅ 支持 | ✅ 支持 |
-| **后台定位** | ✅ 支持 | ✅ 支持 | ✅ 支持 | ⚠️ 需要权限 |
-| **前台服务** | ❌ 不支持 | ❌ 不支持 | ✅ 支持 | ✅ 支持 |
-| **透明状态栏** | ❌ 不支持 | ⚠️ 半透明 | ✅ 完全透明 | ✅ 完全透明 |
-| **主题兼容** | ✅ 智能适配 | ✅ 智能适配 | ✅ 智能适配 | ✅ 智能适配 |
-
-### 📱 设备品牌
-| 品牌 | 自启动权限 | 后台保活 | 电池优化 | 优化指导 |
-|------|-----------|----------|----------|----------|
-| **华为/荣耀** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
-| **小米/红米** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
-| **OPPO/一加** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
-| **vivo** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
-| **三星** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
+- 📝 **输入校验**: Webhook URL格式和上报周期严格校验
+- 🖥️ **多分辨率适配**: 支持不同屏幕尺寸
+- 🔧 **设备优化指导**: 内置各品牌设备优化设置指导
+- 🔒 **SQL注入防护**: 使用参数化查询防止SQL注入
 
 ## 🎨 界面预览
 
-> 💡 **快速预览**: [📱 手机端界面](./UI_PREVIEW.html) | [📟 平板端界面](./TABLET_UI_PREVIEW.html)
+> 💡 **快速预览**: [📱 手机端界面](https://haoxiang.eu.org/ui/UI_PREVIEW) | [📟 平板端界面](https://haoxiang.eu.org/ui//TABLET_UI_PREVIEW)
 
 ### 📱 手机端特性
 - **单面板设计**: 底部TAB切换，界面简洁统一
@@ -98,121 +63,6 @@
 - **触摸友好**: 更大的按钮和交互区域
 - **信息密度**: 合理的信息密度，充分利用大屏空间
 - **横竖屏适配**: 支持横竖屏切换，保持良好的用户体验
-
-## ⚙️ 配置说明
-
-### 基本配置
-1. **Webhook URL**: 必须以 http/https 开头，不能为空，输入时有格式校验，支持一键恢复默认
-2. **上报间隔**: 10~10800秒，不能为空，超范围无效，支持一键恢复默认
-3. **通知开关**: 控制前台通知显示，保持应用在后台运行
-4. **恢复默认**: 点击“恢复默认”按钮可一键还原推荐配置
-
-### 数据格式
-```json
-{
-  "latitude": 37.7749,
-  "longitude": -122.4194,
-  "altitude": 100.5,
-  "gps_accuracy": 5.0,
-  "battery": 75,
-  "speed": 30.0,
-  "bearing": 180.0,
-  "timestamp": 1640995200000,
-  "provider": "gps",
-  "screen_off": false,
-  "power_save_mode": false
-}
-```
-
-## 🏠 Home Assistant 集成
-
-> 💡 **推荐方案**: 配合 [TRSDM Dynamic Device Tracker](https://github.com/Dekadinious/trsdm_custom_device_tracker_for_home_assistant) 插件使用，提供更灵活的设备和属性管理
-
-### 方案一：TRSDM Dynamic Device Tracker (推荐)
-
-#### 安装步骤
-1. 确保已安装 [HACS](https://hacs.xyz/) (Home Assistant Community Store)
-2. 在Home Assistant中，进入 HACS > Integrations
-3. 点击"+"按钮，搜索"TRSDM Dynamic Device Tracker"
-4. 点击安装 TRSDM Dynamic Device Tracker 集成
-5. 重启 Home Assistant
-
-#### 配置步骤
-1. 在Home Assistant中，进入 Settings > Devices & Services
-2. 点击"+"按钮添加新集成
-3. 搜索"TRSDM Dynamic Device Tracker"并选择
-4. 按照提示设置你的第一个设备追踪器：
-   - 给追踪器起个名字（例如："我的手机"）
-   - 集成会自动生成唯一的webhook URL
-
-#### 使用方式
-发送POST请求到webhook URL，包含JSON数据。只需要`latitude`和`longitude`字段是必需的。
-
-```bash
-curl -X POST https://your-home-assistant-url/api/webhook/your-webhook-id \
- -H "Content-Type: application/json" \
- -d '{"latitude": 37.7749, "longitude": -122.4194, "speed": 30, "battery": 75}'
-```
-
-#### 标准属性
-- 距离家的距离（米和英里）
-- 相对于家的方向（towards, away_from, stationary）
-- 从家的方位角（N, NE, E, SE, S, SW, W, NW）
-- 最后更新时间戳
-- 最后重要位置变化时间（10米累积）
-
-### 方案二：原生Webhook集成
-
-#### 自动化配置
-```yaml
-automation:
-  - alias: "Location Update"
-    trigger:
-      platform: webhook
-      webhook_id: your_webhook_id
-    action:
-      - service: device_tracker.see
-        data:
-          dev_id: myphone
-          location_name: home
-          latitude: "{{ trigger.json.latitude }}"
-          longitude: "{{ trigger.json.longitude }}"
-          gps_accuracy: "{{ trigger.json.gps_accuracy }}"
-          battery: "{{ trigger.json.battery }}"
-```
-
-#### 设备追踪器配置
-```yaml
-device_tracker:
-  - platform: webhook
-    webhook_id: your_webhook_id
-    name: "我的手机"
-    icon: mdi:cellphone
-```
-
-### 方案对比
-
-| 特性 | TRSDM Dynamic Device Tracker | 原生Webhook集成 |
-|------|------------------------------|-----------------|
-| **安装难度** | ⭐⭐⭐ 需要HACS | ⭐⭐ 原生支持 |
-| **配置灵活性** | ⭐⭐⭐⭐⭐ 高度可定制 | ⭐⭐ 基础功能 |
-| **属性管理** | ⭐⭐⭐⭐⭐ 动态属性 | ⭐⭐ 固定属性 |
-| **设备数量** | ⭐⭐⭐⭐⭐ 无限制 | ⭐⭐⭐ 有限制 |
-| **界面友好** | ⭐⭐⭐⭐⭐ 图形界面 | ⭐⭐ 代码配置 |
-| **维护便利** | ⭐⭐⭐⭐⭐ 易于管理 | ⭐⭐ 需要手动维护 |
-
-### 推荐使用场景
-
-#### TRSDM Dynamic Device Tracker 适合：
-- 🏠 **家庭用户**: 需要图形界面配置
-- 🔧 **开发者**: 需要灵活的属性和设备管理
-- 📱 **多设备**: 需要追踪多个设备
-- 🎯 **定制化**: 需要自定义属性和功能
-
-#### 原生Webhook集成 适合：
-- 🚀 **快速部署**: 简单的一对一设备追踪
-- 📚 **学习目的**: 了解Home Assistant基础功能
-- 🔒 **安全考虑**: 不想安装第三方插件
 
 ## 🚀 使用指南
 
@@ -284,18 +134,316 @@ device_tracker:
 - 🔐 在可信网络环境下使用
 - 🔐 定期检查上报数据的准确性
 
+## ⚙️ 配置说明
+
+### 基本配置
+1. **Webhook URL**: 必须以 http/https 开头，不能为空，输入时有格式校验
+2. **上报间隔**: 10~10800秒，不能为空，超范围无效
+3. **通知开关**: 控制前台通知显示，保持应用在后台运行
+
+### 数据格式
+
+应用会根据不同的上报场景发送不同格式的数据：
+
+#### 标准位置上报格式
+```json
+{
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "altitude": 100.5,
+  "gps_accuracy": 5.0,
+  "battery": 75,
+  "speed": 30.0,
+  "bearing": 180.0,
+  "timestamp": 1640995200000,
+  "provider": "gps",
+  "screen_off": false,
+  "power_save_mode": false
+}
+```
+
+#### 立即上报格式（包含额外标记）
+```json
+{
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "altitude": 100.5,
+  "gps_accuracy": 5.0,
+  "battery": 75,
+  "speed": 30.0,
+  "bearing": 180.0,
+  "timestamp": 1640995200000,
+  "provider": "gps",
+  "screen_off": false,
+  "power_save_mode": false,
+  "immediate_report": true
+}
+```
+
+#### WorkManager简化格式（仅基础字段）
+```json
+{
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "altitude": 100.5,
+  "accuracy": 5.0,
+  "timestamp": 1640995200000
+}
+```
+
+### 字段说明
+
+| 字段名 | 类型 | 说明 | 是否必需 |
+|--------|------|------|----------|
+| `latitude` | number | 纬度 | ✅ |
+| `longitude` | number | 经度 | ✅ |
+| `altitude` | number | 海拔高度（米） | ⚠️ |
+| `gps_accuracy` / `accuracy` | number | GPS精度（米） | ⚠️ |
+| `battery` | number | 电池电量百分比 | ⚠️ |
+| `speed` | number | 移动速度（米/秒） | ⚠️ |
+| `bearing` | number | 方向角度（0-360度） | ⚠️ |
+| `timestamp` | number | 时间戳（毫秒） | ✅ |
+| `provider` | string | 定位提供者（gps/network/passive） | ⚠️ |
+| `screen_off` | boolean | 屏幕是否关闭 | ⚠️ |
+| `power_save_mode` | boolean | 是否处于省电模式 | ⚠️ |
+| `immediate_report` | boolean | 是否为立即上报 | ⚠️ |
+
+**注意**: 只有`latitude`和`longitude`是必需字段，其他字段根据设备能力和系统状态可能为空或缺失。
+
+## 📊 兼容性支持
+
+### 🖥️ 屏幕尺寸
+| 设备类型 | 屏幕尺寸 | 分辨率范围 | 界面布局 | 触摸优化 | 状态栏 | 典型设备举例 |
+|---------|---------|-----------|---------|---------|--------|-------------|
+| **小屏手机** | 4.0-4.7英寸 | 480x800-720x1280 | ✅ 紧凑布局 | ✅ 标准尺寸 | ✅ 完全透明 | 小米4 (5.0")、华为P8 (5.2")、三星Galaxy S5 (5.1") |
+| **标准手机** | 5.0-6.0英寸 | 720x1280-1080x1920 | ✅ 单面板设计 | ✅ 标准尺寸 | ✅ 完全透明 | 华为P40 (6.1")、小米12 (6.28")、OPPO Find X3 (6.7") |
+| **大屏手机** | 6.1-6.7英寸 | 1080x1920-1440x3200 | ✅ 单面板设计 | ✅ 标准尺寸 | ✅ 完全透明 | 华为Mate 50 Pro (6.74")、小米13 Ultra (6.73")、vivo X90 Pro+ (6.78") |
+| **小屏平板** | 7.0-8.0英寸 | 1024x768-1200x1920 | ✅ 优化布局 | ✅ 大尺寸按钮 | ✅ 完全透明 | 华为平板M6 (8.4")、小米平板4 (8.0")、三星Galaxy Tab A (8.0") |
+| **标准平板** | 8.5-10.5英寸 | 1200x1920-1600x2560 | ✅ 优化布局 | ✅ 大尺寸按钮 | ✅ 完全透明 | 华为MatePad Pro (10.8")、小米平板5 (11")、OPPO Pad (11") |
+| **大屏平板** | 11.0-12.9英寸 | 1600x2560-2048x2732 | ✅ 大屏适配 | ✅ 超大尺寸按钮 | ✅ 完全透明 | 华为MatePad Pro 12.6"、小米平板6 Pro (11") |
+| **折叠屏** | 展开6.7-8.0英寸 | 1080x1920-2208x1768 | ✅ 自适应布局 | ✅ 智能尺寸 | ✅ 完全透明 | 三星Galaxy Fold (7.6")、华为Mate X (8.0")、小米MIX Fold (8.01") |
+| **车载/大屏** | 10.0-15.0英寸 | 1920x1080-2560x1440 | ✅ 大屏适配 | ✅ 超大尺寸按钮 | ✅ 完全透明 | 车载Android系统、智能大屏设备、Android TV |
+
+### 🤖 Android版本
+| 功能 | Android 4.0-4.3 | Android 4.4-4.4W | Android 5.0+ | Android 10+ |
+|------|------------------|-------------------|--------------|-------------|
+| **基础定位** | ✅ 支持 | ✅ 支持 | ✅ 支持 | ✅ 支持 |
+| **后台定位** | ✅ 支持 | ✅ 支持 | ✅ 支持 | ⚠️ 需要权限 |
+| **前台服务** | ❌ 不支持 | ❌ 不支持 | ✅ 支持 | ✅ 支持 |
+| **透明状态栏** | ❌ 不支持 | ⚠️ 半透明 | ✅ 完全透明 | ✅ 完全透明 |
+| **主题兼容** | ✅ 智能适配 | ✅ 智能适配 | ✅ 智能适配 | ✅ 智能适配 |
+
+### 📱 设备品牌
+| 品牌 | 自启动权限 | 后台保活 | 电池优化 | 优化指导 |
+|------|-----------|----------|----------|----------|
+| **华为/荣耀** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
+| **小米/红米** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
+| **OPPO/一加** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
+| **vivo** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
+| **三星** | ⚠️ 需要设置 | ⚠️ 需要优化 | ⚠️ 需要忽略 | ✅ 内置指导 |
+
+## 🏠 Home Assistant 集成
+
+> 💡 **推荐方案**: 配合 [TRSDM Dynamic Device Tracker](https://github.com/Dekadinious/trsdm_custom_device_tracker_for_home_assistant) 插件使用，提供更灵活的设备和属性管理
+
+### 方案一：TRSDM Dynamic Device Tracker (推荐)
+
+#### 安装步骤
+1. 确保已安装 [HACS](https://hacs.xyz/) (Home Assistant Community Store)
+2. 在Home Assistant中，进入 HACS > Integrations
+3. 点击"+"按钮，搜索"TRSDM Dynamic Device Tracker"
+4. 点击安装 TRSDM Dynamic Device Tracker 集成
+5. 重启 Home Assistant
+
+#### 配置步骤
+1. 在Home Assistant中，进入 Settings > Devices & Services
+2. 点击"+"按钮添加新集成
+3. 搜索"TRSDM Dynamic Device Tracker"并选择
+4. 按照提示设置你的第一个设备追踪器：
+   - 给追踪器起个名字（例如："我的手机"）
+   - 集成会自动生成唯一的webhook URL
+
+#### 使用方式
+1. **配置Webhook URL**: 在APP的配置面板中填写Home Assistant的webhook URL
+2. **设置上报周期**: 配置位置上报的时间间隔（10-10800秒）
+3. **启动服务**: 点击"开始定位"按钮启动位置上报服务
+4. **自动上报**: APP会自动按照配置的周期向webhook URL发送位置数据
+
+**示例配置**:
+- Webhook URL: `https://your-home-assistant-url/api/webhook/your-webhook-id`
+- 上报周期: `60`秒
+- 通知开关: `开启`（保持应用在后台运行）
+
+**数据格式**: APP会自动发送包含位置信息的JSON数据，只需要`latitude`和`longitude`字段是必需的，其他字段会根据设备能力自动添加。
+
+> ⚠️ **重要提醒**: 上报地址必须使用域名或公网IP地址，不能使用内网IP（如192.168.x.x、10.x.x.x等）。因为手机设备需要通过互联网访问Home Assistant服务器，内网IP地址在手机网络环境下无法访问。
+
+#### 标准属性
+- 距离家的距离（米和英里）
+- 相对于家的方向（towards, away_from, stationary）
+- 从家的方位角（N, NE, E, SE, S, SW, W, NW）
+- 最后更新时间戳
+- 最后重要位置变化时间（10米累积）
+
+### 方案二：原生Webhook集成
+
+#### 自动化配置
+```yaml
+automation:
+  - alias: "Location Update"
+    trigger:
+      platform: webhook
+      webhook_id: your_webhook_id
+    action:
+      - service: device_tracker.see
+        data:
+          dev_id: myphone
+          location_name: home
+          latitude: "{{ trigger.json.latitude }}"
+          longitude: "{{ trigger.json.longitude }}"
+          gps_accuracy: "{{ trigger.json.gps_accuracy }}"
+          battery: "{{ trigger.json.battery }}"
+```
+
+#### 设备追踪器配置
+```yaml
+device_tracker:
+  - platform: webhook
+    webhook_id: your_webhook_id
+    name: "我的手机"
+    icon: mdi:cellphone
+```
+
+### 方案对比
+
+| 特性 | TRSDM Dynamic Device Tracker | 原生Webhook集成 |
+|------|------------------------------|-----------------|
+| **安装难度** | ⭐⭐⭐ 需要HACS | ⭐⭐ 原生支持 |
+| **配置灵活性** | ⭐⭐⭐⭐⭐ 高度可定制 | ⭐⭐ 基础功能 |
+| **属性管理** | ⭐⭐⭐⭐⭐ 动态属性 | ⭐⭐ 固定属性 |
+| **设备数量** | ⭐⭐⭐⭐⭐ 无限制 | ⭐⭐⭐ 有限制 |
+| **界面友好** | ⭐⭐⭐⭐⭐ 图形界面 | ⭐⭐ 代码配置 |
+| **维护便利** | ⭐⭐⭐⭐⭐ 易于管理 | ⭐⭐ 需要手动维护 |
+
+### 推荐使用场景
+
+#### TRSDM Dynamic Device Tracker 适合：
+- 🏠 **家庭用户**: 需要图形界面配置
+- 🔧 **开发者**: 需要灵活的属性和设备管理
+- 📱 **多设备**: 需要追踪多个设备
+- 🎯 **定制化**: 需要自定义属性和功能
+
+#### 原生Webhook集成 适合：
+- 🚀 **快速部署**: 简单的一对一设备追踪
+- 📚 **学习目的**: 了解Home Assistant基础功能
+- 🔒 **安全考虑**: 不想安装第三方插件
+
+### 开发环境
+- Android Studio 4.0+
+- Android SDK API 14+
+- Gradle 6.0+
+
+### 代码规范
+- 遵循Android开发规范
+- 添加适当的注释
+- 进行充分的测试
+
+## 📦 打包和安装
+
+### 🔧 打包方式
+
+#### 使用打包脚本 (推荐)
+```bash
+# Linux/Mac
+chmod +x build_scripts.sh
+./build_scripts.sh
+
+# Windows
+build_scripts.bat
+```
+
+#### 手动打包
+```bash
+# 打包Release版本
+./gradlew assembleRelease
+
+# 打包Debug版本  
+./gradlew assembleDebug
+```
+
+**重要**: 手动打包前需要配置`local.properties`文件：
+
+1. **复制配置模板**:
+```bash
+cp local.properties.example local.properties
+```
+
+2. **编辑local.properties文件**:
+```properties
+# 签名配置（Release版本必需）
+KEYSTORE_PASSWORD=你的签名密码
+KEY_ALIAS=你的key别名
+KEY_PASSWORD=你的key密码
+
+# 服务端配置（可选，有默认值）
+CONFIG_URL=你的配置服务器地址
+HEARTBEAT_URL=你的心跳地址
+WEBHOOK_URL=你的webhook地址
+```
+
+3. **配置说明**:
+- **签名配置**: Release版本打包必需，用于APK签名
+- **服务端配置**: 可选，如果不配置会使用默认值
+- **默认值**: 
+  - `CONFIG_URL`: `https://www.zhangsan.com/locationtracker/api/config`
+  - `HEARTBEAT_URL`: `https://www.zhangsan.com/locationtracker/api/config/heartbeat`
+  - `WEBHOOK_URL`: `https://www.zhangsan.com/api/webhook/db72ebc1627e52685ca64cdb380`
+
+### 版本说明
+
+#### Release版本
+- **包名**: `com.hx.locationtracker`
+- **特点**: 已签名，可直接发布
+- **优化**: 代码混淆、资源压缩、性能优化
+- **用途**: 正式发布版本
+
+#### Debug版本  
+- **包名**: `com.hx.locationtracker.debug`
+- **特点**: 未签名，用于测试
+- **优化**: 保留调试信息，便于问题排查
+- **用途**: 开发测试版本
+
+#### 同时安装
+- 两个版本可以同时安装，包名不同
+- Release版本用于正式使用
+- Debug版本用于测试和调试
+
+### 📥 安装方式
+
+#### 方式一: 直接安装
+1. 下载release中的APK文件
+2. 在Android设备上安装
+3. 授予必要权限
+4. 配置Webhook URL和上报间隔
+
+#### 方式二: 源码编译
+1. 克隆项目代码
+2. 使用Android Studio打开项目
+3. 编译生成APK
+4. 安装到设备
+
 ## 🚀 未来开发计划
 
 ### 📱 设备端功能增强
 
-#### 🔄 服务端配置推送
-- **远程配置更新**: 服务端可远程推送配置信息到设备APP
+#### 🔄 服务端配置推送 (已具备基础架构)
+- **远程配置更新**: 基于现有的ConfigSyncService，实现服务端远程推送配置信息到设备APP
 - **实时配置同步**: 设备自动接收并应用服务端下发的配置
 - **配置版本管理**: 支持配置版本控制和回滚机制
 - **增量配置更新**: 只推送变更的配置项，减少数据传输
 
-#### 💓 心跳监控系统
-- **设备在线状态**: 通过心跳包实时监控设备在线/离线状态
+#### 💓 心跳监控系统 (已具备基础架构)
+- **设备在线状态**: 基于现有的HEARTBEAT_URL，通过心跳包实时监控设备在线/离线状态
 - **网络状态检测**: 自动检测网络连接质量和稳定性
 - **离线时间统计**: 记录设备离线时长和频率
 - **异常状态告警**: 设备异常离线时自动发送告警
@@ -349,10 +497,10 @@ device_tracker:
 ### 📅 开发时间线
 
 #### 第一阶段：基础功能 (1-2个月)
-- [ ] 设备心跳机制实现
-- [ ] 服务端设备状态监控
-- [ ] 基础配置推送功能
-- [ ] 设备认证机制
+- [ ] 完善ConfigSyncService的启动和调用机制
+- [ ] 实现服务端设备状态监控
+- [ ] 完善配置推送功能
+- [ ] 实现设备认证机制
 
 #### 第二阶段：管理平台 (2-3个月)
 - [ ] Web管理界面开发
@@ -385,75 +533,15 @@ device_tracker:
 - **用户导向**: 优先开发用户最需要的功能
 - **渐进式开发**: 分阶段开发，确保每个阶段都有可用版本
 
-## 📦 打包和安装
-
-### 🔧 打包方式
-
-#### 使用打包脚本 (推荐)
-```bash
-# Linux/Mac
-chmod +x build_scripts.sh
-./build_scripts.sh
-
-# Windows
-build_scripts.bat
-```
-
-#### 手动打包
-```bash
-# 打包Release版本
-./gradlew assembleRelease
-
-# 打包Debug版本  
-./gradlew assembleDebug
-```
-
-### 📱 版本说明
-
-#### Release版本
-- **包名**: `com.hx.locationtracker`
-- **特点**: 已签名，可直接发布
-- **优化**: 代码混淆、资源压缩、性能优化
-- **用途**: 正式发布版本
-
-#### Debug版本  
-- **包名**: `com.hx.locationtracker.debug`
-- **特点**: 未签名，用于测试
-- **优化**: 保留调试信息，便于问题排查
-- **用途**: 开发测试版本
-
-#### 同时安装
-- 两个版本可以同时安装，包名不同
-- Release版本用于正式使用
-- Debug版本用于测试和调试
-
-### 📥 安装方式
-
-#### 方式一: 直接安装
-1. 下载release中的APK文件
-2. 在Android设备上安装
-3. 授予必要权限
-4. 配置Webhook URL和上报间隔
-
-#### 方式二: 源码编译
-1. 克隆项目代码
-2. 使用Android Studio打开项目
-3. 编译生成APK
-4. 安装到设备
+#### 🔧 技术基础
+- **现有架构**: 基于现有的ConfigSyncService和心跳机制
+- **兼容性**: 保持对现有功能的完全兼容
+- **可扩展性**: 设计支持未来功能扩展的架构
+- **稳定性**: 确保新功能不影响现有功能的稳定性
 
 ## 🤝 贡献指南
 
 欢迎提交Issue和Pull Request来改进项目！
-
-### 开发环境
-- Android Studio 4.0+
-- Android SDK API 14+
-- Gradle 6.0+
-
-### 代码规范
-- 遵循Android开发规范
-- 添加适当的注释
-- 进行充分的测试
 
 ## 📄 许可证
 
@@ -474,8 +562,7 @@ build_scripts.bat
 ### V2.1.5
 - 全面优化 UI 细节，提升用户体验：
   - Webhook/周期输入框增加详细提示（hint），说明格式和范围
-  - 新增“恢复默认”按钮，一键恢复默认 Webhook 地址和周期
-  - 按钮防抖处理，防止多次点击“开始”导致重复启动
+  - 按钮防抖处理，防止多次点击"开始"导致重复启动
   - 所有输入和操作错误均有明确 Toast 提示
   - 服务启动/停止、上报成功/失败等操作有明显 UI 反馈
   - 夜间模式/高对比度适配，保证不同主题下界面清晰
@@ -500,7 +587,7 @@ build_scripts.bat
 - 🛠️ **主题验证机制**: 每次设置主题后都验证是否生效，失败时自动兜底
 - ✨ **崩溃日志管理优化**: 修复崩溃日志清理后对话框信息不更新的问题，提供立即清理功能
 - ✨ **屏幕状态自适应定位间隔**: 屏幕熄灭时自动缩短定位间隔，提高被系统唤醒概率
-- ✨ **位置变化检测**: 只有位置发生变化且时间间隔满足时才会上报，降低无效上报
+- ✨ **数据去重机制**: 只有位置数据发生变化时才会上报，降低无效上报
 - ✨ **低电量智能保护**: 电量低于10%时暂停位置上报，电量恢复后自动重启
 - ✨ **增强WakeLock机制和保活策略**: 使用更强的WakeLock策略确保后台运行
 - ✨ **服务自动重启机制**: 被系统杀死后通过广播机制自动重启
@@ -515,7 +602,7 @@ build_scripts.bat
 
 ### v2.1.2
 - 🚨 **重要修复**: 修复屏幕状态切换时上报间隔自动调整的问题
-- ✨ **位置变化检测**: 只有位置发生变化且时间间隔满足时才会上报
+- ✨ **数据去重机制**: 只有位置数据发生变化时才会上报
 - 🔧 **API兼容性**: 修复API级别兼容性问题
 - 🔧 **网络优化**: 改进网络请求和错误处理
 - 🔧 **日志系统**: 优化状态广播和日志系统
