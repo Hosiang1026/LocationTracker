@@ -53,7 +53,7 @@
     <string name="start_location">开始定位</string>
     <string name="monitor_tab">监控</string>
     <string name="config_tab">配置</string>
-    <string name="config_description">配置说明：\n1. 上报地址: 填入你的webhook地址\n2. 更新周期: 定位上报间隔（秒）\n3. 开启通知: 保持应用在后台运行\n\n数据格式示例：\n{\"latitude\": 37.7749, \"longitude\": -122.4194, \"speed\": 30, \"battery\": 75}\n\nAPP版本：V2.1.5   开发者：狂欢马克思</string>
+    <string name="config_description">配置说明：\n1. 上报地址: 填入你的webhook地址\n2. 更新周期: 定位上报间隔（秒）\n3. 开启通知: 保持应用在后台运行\n\nAPP版本：V2.1.5   开发者：狂欢马克思</string>
     <string name="webhook_url_hint">https://your-webhook-url.com</string>
     <string name="fill_required">填写项不能为空</string>
     <string name="invalid_url">请输入有效的URL地址</string>

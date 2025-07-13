@@ -45,8 +45,15 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import java.util.concurrent.TimeUnit;
+import android.app.Notification;
+
+
 
 public class ltmService extends Service {
+    // ====== 1. SingleInstance机制和全局锁防止多实例 ======
+    private static final Object INSTANCE_LOCK = new Object();
+    private static volatile boolean isServiceActive = false;
+
     public static String HOST = "";
     private String TAG = "ljstag";
     private int time = 0;
@@ -87,20 +94,54 @@ public class ltmService extends Service {
     private BroadcastReceiver immediateReportReceiver = null;
 
     private static final String LOCATION_WORK_NAME = "LocationPeriodicWork";
+    // 日志去重机制
+    private String lastLogMessage = "";
+    private String lastLogType = "";
+    private long lastLogTime = 0;
+    private static final long LOG_DEDUP_INTERVAL_MS = 1000;
+    // WakeLock判重
+    private boolean isWakeLockAcquired = false;
+    // WorkManager判重
+    private boolean isWorkerStarted = false;
     private void startLocationWorker(long intervalSeconds) {
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
-            LocationWorker.class, intervalSeconds, TimeUnit.SECONDS)
-            .build();
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            LOCATION_WORK_NAME,
-            ExistingPeriodicWorkPolicy.REPLACE,
-            workRequest
-        );
-        sendLogBroadcast("已启动 WorkManager 定时定位任务，周期: " + intervalSeconds + "秒", "INFO");
+        if (intervalSeconds < 10 || intervalSeconds > 10800) {
+            sendLogBroadcast("定时任务周期无效，未启动WorkManager", "WARNING");
+            return;
+        }
+        if (isWorkerStarted) {
+            // 不再打印任何日志
+            return;
+        }
+        try {
+            isWorkerStarted = true;
+            PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+                LocationWorker.class, intervalSeconds, java.util.concurrent.TimeUnit.SECONDS)
+                .build();
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                LOCATION_WORK_NAME,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                workRequest
+            );
+            sendLogBroadcast("已启动 WorkManager 定时定位任务，周期: " + intervalSeconds + "秒", "INFO");
+        } catch (Exception e) {
+            Log.e(TAG, "启动WorkManager失败", e);
+            sendLogBroadcast("启动WorkManager失败: " + e.getMessage(), "ERROR");
+            isWorkerStarted = false;
+        }
     }
     private void stopLocationWorker() {
-        WorkManager.getInstance(this).cancelUniqueWork(LOCATION_WORK_NAME);
-        sendLogBroadcast("已停止 WorkManager 定时定位任务", "INFO");
+        if (!isWorkerStarted) {
+            // 不再打印任何日志
+            return;
+        }
+        try {
+            isWorkerStarted = false;
+            WorkManager.getInstance(this).cancelUniqueWork(LOCATION_WORK_NAME);
+            sendLogBroadcast("已停止 WorkManager 定时定位任务", "INFO");
+        } catch (Exception e) {
+            Log.e(TAG, "停止WorkManager失败", e);
+            sendLogBroadcast("停止WorkManager失败: " + e.getMessage(), "ERROR");
+        }
     }
 
     public ltmService() {
@@ -109,8 +150,13 @@ public class ltmService extends Service {
     /**
      * 获取WakeLock
      */
-    private void acquireWakeLock() {
+    private synchronized void acquireWakeLock() {
         try {
+            if (isWakeLockAcquired && wakeLock != null && wakeLock.isHeld()) {
+                // 不再打印任何日志
+                return;
+            }
+            
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
             // 使用兼容的方法，避免过时API警告
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -135,27 +181,34 @@ public class ltmService extends Service {
                 }
             }
             wakeLock.acquire();
+            isWakeLockAcquired = true;
             sendLogBroadcast("✅ 已获取增强WakeLock，确保后台运行", "SUCCESS");
         } catch (Exception e) {
             Log.e(TAG, "获取WakeLock失败", e);
             LocationTrackerApplication.logError("获取WakeLock失败", e);
             sendLogBroadcast("获取WakeLock失败: " + e.getMessage(), "ERROR");
+            isWakeLockAcquired = false;
         }
     }
 
     /**
      * 释放WakeLock
      */
-    private void releaseWakeLock() {
+    private synchronized void releaseWakeLock() {
         try {
-            if (wakeLock != null && wakeLock.isHeld()) {
-                wakeLock.release();
-                wakeLock = null;
-                sendLogBroadcast("已释放WakeLock", "INFO");
+            if (!isWakeLockAcquired || wakeLock == null || !wakeLock.isHeld()) {
+                sendLogBroadcast("WakeLock未获取，无需释放", "INFO");
+                return;
             }
+            
+            wakeLock.release();
+            wakeLock = null;
+            isWakeLockAcquired = false;
+            sendLogBroadcast("已释放WakeLock", "INFO");
         } catch (Exception e) {
             Log.e(TAG, "释放WakeLock失败", e);
             LocationTrackerApplication.logError("释放WakeLock失败", e);
+            sendLogBroadcast("释放WakeLock失败: " + e.getMessage(), "ERROR");
         }
     }
 
@@ -179,7 +232,7 @@ public class ltmService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public synchronized int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
         
         // 防重复启动检查
@@ -195,7 +248,7 @@ public class ltmService extends Service {
                 try {
                     DataBaseOpenHelper dbHelper = new DataBaseOpenHelper(this);
                     db = dbHelper.getReadableDatabase();
-                    cursor = db.rawQuery("select * from " + Contant.TABLENAME, null);
+                    cursor = db.rawQuery("select * from config", null);
                     
                     if (cursor != null && cursor.moveToFirst()) {
                         int urlIndex = cursor.getColumnIndex("url");
@@ -234,6 +287,8 @@ public class ltmService extends Service {
                                 }
                                 
                                 // 重新启动定位
+                                stopLocationWorker();
+                                startLocationWorker(time);
                                 startLocationUpdates();
                             }
                         }
@@ -255,6 +310,21 @@ public class ltmService extends Service {
         }
         
         sendLogBroadcast("=== 位置服务启动 ===", "INFO");
+        
+        // 立即设置运行标志，防止重复启动
+        isLocationRunning = true;
+
+        // Android 8.0+ 必须5秒内调用startForeground
+        if (Build.VERSION.SDK_INT >= 26) {
+            try {
+                Notification notification = Utils.buildNotification(getApplicationContext(), 0, 0, 0, 0, 0);
+                startForeground(Utils.NOTIFY_ID, notification);
+                sendLogBroadcast("主服务已调用startForeground", "INFO");
+            } catch (Exception e) {
+                Log.e(TAG, "主服务startForeground失败", e);
+                sendLogBroadcast("主服务startForeground失败: " + e.getMessage(), "ERROR");
+            }
+        }
         
         // 重置所有计数器
         reportCount = 0;
@@ -300,6 +370,7 @@ public class ltmService extends Service {
             
             // 设置保活定时器，定期检查服务状态
             // startKeepAliveTimer();
+            stopLocationWorker();
             startLocationWorker(time);
             
         if(isSartLocation) {
@@ -312,6 +383,8 @@ public class ltmService extends Service {
             Log.e(TAG, "onStartCommand执行失败", e);
             sendLogBroadcast("服务启动失败: " + e.getMessage(), "ERROR");
             sendLogBroadcast("错误详情: " + e.toString(), "ERROR");
+            // 如果启动失败，重置运行标志
+            isLocationRunning = false;
         }
         
         // 返回START_STICKY，确保服务被杀死后自动重启
@@ -385,6 +458,12 @@ public class ltmService extends Service {
 
     private void init() {
         try {
+            // 检查是否已经初始化
+            if (locationListener != null && locationManager != null) {
+                sendLogBroadcast("定位服务已初始化，跳过重复初始化", "INFO");
+                return;
+            }
+            
             // 初始化定位管理器
             if (locationManager == null) {
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -406,7 +485,7 @@ public class ltmService extends Service {
             try {
                 DataBaseOpenHelper dbHelper = new DataBaseOpenHelper(this);
                 db = dbHelper.getReadableDatabase();
-                cursor = db.rawQuery("select * from " + Contant.TABLENAME, null);
+                cursor = db.rawQuery("select * from config", null);
                 
                 if (cursor != null && cursor.moveToFirst()) {
                     // 使用兼容的列索引获取方法，避免过时API警告
@@ -427,11 +506,11 @@ public class ltmService extends Service {
                     } else {
                         sendLogBroadcast("数据库列索引获取失败", "ERROR");
                         return;
-                }
-                
+                    }
+                    
                     sendLogBroadcast("配置加载成功: URL=" + HOST + ", 间隔=" + time + "秒", "SUCCESS");
                 } else {
-                    sendLogBroadcast("数据库中没有找到配置信息", "ERROR");
+                    sendLogBroadcast("数据库中没有找到配置信息，等待用户配置", "WARNING");
                     return;
                 }
             } catch (Exception e) {
@@ -457,7 +536,7 @@ public class ltmService extends Service {
                 return;
             }
             
-            // 初始化定位监听器
+            // 初始化定位监听器（只创建一次）
             if (locationListener == null) {
             locationListener = new LocationListener() {
                 @Override
@@ -518,7 +597,13 @@ public class ltmService extends Service {
      */
     private void stopLocation(){
         // 停止定位
-        locationManager.removeUpdates(locationListener);
+        if (locationManager != null && locationListener != null) {
+            try {
+                locationManager.removeUpdates(locationListener);
+            } catch (Exception e) {
+                Log.e(TAG, "停止定位更新失败", e);
+            }
+        }
         isSartLocation = false;
         isLocationRunning = false;
         updateStatus();
@@ -538,81 +623,20 @@ public class ltmService extends Service {
 
     @Override
     public void onCreate() {
+        synchronized (INSTANCE_LOCK) {
+            if (isServiceActive) {
+                Log.w(TAG, "检测到已有ltmService实例，自动退出本实例，防止多进程/多实例冲突");
+                stopSelf();
+                return;
+            }
+            isServiceActive = true;
+        }
         super.onCreate();
         Log.d(TAG, "onCreate:");
         
-        try {
-        IntentFilter recevierFilter=new IntentFilter();
-        recevierFilter.addAction(Intent.ACTION_SCREEN_ON);
-        recevierFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        recevierFilter.addAction(Intent.ACTION_USER_PRESENT);
-        recevierFilter.addAction("com.ljs.locationtracker.start");
-        receiver=new BootBroadcastReceiver();
-        registerReceiver(receiver, recevierFilter);
-        
-        // 创建自定义广播接收器来处理屏幕状态变化
-        IntentFilter screenFilter = new IntentFilter();
-        screenFilter.addAction(Intent.ACTION_SCREEN_ON);
-        screenFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (Intent.ACTION_SCREEN_OFF.equals(action)) {
-                    isScreenOff = true;
-                    sendLogBroadcast("屏幕已熄灭，切换到省电模式", "INFO");
-                    // 重新调整定位间隔
-                    adjustLocationUpdatesForScreenState();
-                } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
-                    isScreenOff = false;
-                    sendLogBroadcast("屏幕已点亮，恢复正常模式", "INFO");
-                    // 重新调整定位间隔
-                    adjustLocationUpdatesForScreenState();
-                }
-            }
-        }, screenFilter);
-        
-        // 创建立即上报广播接收器
-        IntentFilter immediateReportFilter = new IntentFilter();
-        immediateReportFilter.addAction("com.ljs.locationtracker.IMMEDIATE_REPORT");
-        immediateReportReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("com.ljs.locationtracker.IMMEDIATE_REPORT".equals(intent.getAction())) {
-                    sendLogBroadcast("收到立即上报广播，准备立即上报位置", "INFO");
-                    performImmediateLocationReport();
-                }
-            }
-        };
-        registerReceiver(immediateReportReceiver, immediateReportFilter);
-            
-            // 立即发送初始状态
-            updateStatus();
-            
-        } catch (Exception e) {
-            Log.e(TAG, "onCreate执行失败", e);
-            sendLogBroadcast("服务创建失败: " + e.getMessage(), "ERROR");
-        }
-        
-        // 注册省电模式变化广播
-        if (Build.VERSION.SDK_INT >= 21) {
-            IntentFilter powerSaveFilter = new IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
-            registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    boolean powerSave = isPowerSaveMode();
-                    long newInterval = powerSave ? Math.max(time * 2, 600) : time;
-                    stopLocationWorker();
-                    startLocationWorker(newInterval);
-                    sendLogBroadcast("省电模式变化，WorkManager 周期调整为 " + newInterval + " 秒", "INFO");
-                }
-            }, powerSaveFilter);
-        }
-    }
-
-    @Override
-    public void onDestroy() {   //com.ljs.ltmservice.start
-        Log.d(TAG, "onDestroy: ");
+        // 重置运行标志
+        isLocationRunning = false;
+        isSartLocation = false;
         
         // 释放WakeLock
         releaseWakeLock();
@@ -632,8 +656,13 @@ public class ltmService extends Service {
         }
         
         // 停止定位服务
-        if (locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.removeUpdates(locationListener);
+        if (locationManager != null && locationListener != null) {
+            try {
+                locationManager.removeUpdates(locationListener);
+                sendLogBroadcast("已停止定位更新", "INFO");
+            } catch (Exception e) {
+                Log.e(TAG, "停止定位更新失败", e);
+            }
         }
         
         // 销毁定位客户端
@@ -652,7 +681,18 @@ public class ltmService extends Service {
                 Log.e(TAG, "注销立即上报广播接收器失败", e);
             }
         }
+        
+        // 停止WorkManager任务
         stopLocationWorker();
+        
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroy() {
+        synchronized (INSTANCE_LOCK) {
+            isServiceActive = false;
+        }
         super.onDestroy();
     }
 
@@ -906,6 +946,13 @@ public class ltmService extends Service {
      * 发送日志广播
      */
     private void sendLogBroadcast(String message, String type) {
+        long now = System.currentTimeMillis();
+        if (message.equals(lastLogMessage) && type.equals(lastLogType) && (now - lastLogTime) < LOG_DEDUP_INTERVAL_MS) {
+            return; // 1秒内相同日志不重复输出
+        }
+        lastLogMessage = message;
+        lastLogType = type;
+        lastLogTime = now;
         try {
             Intent intent = new Intent(MainActivity.ACTION_LOG_UPDATE);
             intent.putExtra(MainActivity.EXTRA_LOG_MESSAGE, message);
@@ -993,12 +1040,14 @@ public class ltmService extends Service {
     private void trySwitchToBackupProvider(String currentProvider) {
         try {
             // 停止当前定位提供者
-            locationManager.removeUpdates(locationListener);
+            if (locationManager != null && locationListener != null) {
+                locationManager.removeUpdates(locationListener);
+            }
             
             // 按优先级尝试备用方案
             if (currentProvider.equals(LocationManager.GPS_PROVIDER)) {
                 // 如果GPS失败，尝试网络定位
-                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                if (locationManager != null && locationListener != null && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     try {
                         long updateInterval = time * 1000;
                         // 使用兼容的定位请求方法
@@ -1011,7 +1060,7 @@ public class ltmService extends Service {
                 }
                 
                 // 如果网络定位也失败，尝试被动定位
-                if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+                if (locationManager != null && locationListener != null && locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
                     try {
                         long updateInterval = time * 1000;
                         // 使用兼容的定位请求方法
@@ -1024,7 +1073,7 @@ public class ltmService extends Service {
                 }
             } else if (currentProvider.equals(LocationManager.NETWORK_PROVIDER)) {
                 // 如果网络定位失败，尝试被动定位
-                if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+                if (locationManager != null && locationListener != null && locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
                     try {
                         long updateInterval = time * 1000;
                         // 使用兼容的定位请求方法
@@ -1318,6 +1367,12 @@ public class ltmService extends Service {
      */
     private void startLocationUpdates() {
         try {
+            // 检查是否已经在运行定位
+            if (isSartLocation && locationManager != null && locationListener != null) {
+                sendLogBroadcast("定位服务已在运行，跳过重复启动", "INFO");
+                return;
+            }
+            
             // 检查定位提供者是否可用，按优先级选择
             boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);

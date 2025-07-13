@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main);
             Log.d(TAG, "setContentView完成");
             
-            // 设置透明状态栏（兼容Android 4.4及以上）
+            // 设置透明状态栏（必须在setContentView之后立即调用）
             setupTransparentStatusBar();
             
             // 初始化UI组件
@@ -126,6 +126,9 @@ public class MainActivity extends AppCompatActivity {
             
             // 设置事件监听器
             setupEventListeners();
+            
+            // 初始化开始按钮状态
+            updateStartButtonState();
             
             // 初始化状态显示
             updateStatusDisplay();
@@ -156,11 +159,136 @@ public class MainActivity extends AppCompatActivity {
         
             Log.d(TAG, "MainActivity onCreate完成");
             
+            // ====== 动态设置标题栏paddingTop为状态栏高度的25% ======
+            final View headerLayout = findViewById(R.id.header_layout);
+            if (headerLayout != null) {
+                int statusBarHeight = 0;
+                int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+                if (resourceId > 0) {
+                    statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+                }
+                // 取25%状态栏高度，最小为0，最大为状态栏高度
+                int paddingTop = (int) (statusBarHeight * 0.25f);
+                // 保留原有padding
+                int paddingLeft = headerLayout.getPaddingLeft();
+                int paddingRight = headerLayout.getPaddingRight();
+                int paddingBottom = headerLayout.getPaddingBottom();
+                headerLayout.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+            }
+            
         } catch (Exception e) {
             Log.e(TAG, "MainActivity onCreate执行失败", e);
             LocationTrackerApplication.logError("MainActivity onCreate执行失败", e);
             Toast.makeText(this, "应用初始化失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+    
+    /**
+     * 检查配置是否有效
+     */
+    private void checkConfigurationStatus() {
+        try {
+            DataBaseOpenHelper dataBaseOpenHelper = new DataBaseOpenHelper(this);
+            SQLiteDatabase db = dataBaseOpenHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("select * from config", null);
+            
+            if (cursor.getCount() == 0) {
+                logAdapter.addLog("⚠️ 未检测到配置信息", "WARNING");
+                logAdapter.addLog("请填写Webhook URL和更新周期后点击开始定位", "INFO");
+            } else {
+                cursor.moveToFirst();
+                String url = cursor.getString(0);
+                int time = cursor.getInt(5);
+                int notification = cursor.getInt(8);
+                
+                logAdapter.addLog("✅ 配置已保存", "SUCCESS");
+                logAdapter.addLog("📡 Webhook URL: " + url, "INFO");
+                logAdapter.addLog("⏱️ 更新周期: " + time + "秒", "INFO");
+                logAdapter.addLog("🔔 通知开关: " + (notification == 1 ? "开启" : "关闭"), "INFO");
+            }
+            
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            Log.e(TAG, "检查配置状态失败", e);
+        }
+    }
+    
+    /**
+     * 更新开始按钮状态 - 根据配置验证结果启用或禁用按钮
+     */
+    private void updateStartButtonState() {
+        try {
+            if (btnStart == null) {
+                return;
+            }
+            
+            // 检查配置是否有效
+            boolean isValid = isConfigurationValid();
+            
+            // 更新按钮状态
+            btnStart.setEnabled(isValid);
+            
+            // 如果配置无效，可以添加视觉提示
+            if (!isValid) {
+                btnStart.setAlpha(0.6f); // 降低透明度表示禁用状态
+            } else {
+                btnStart.setAlpha(1.0f); // 恢复正常透明度
+            }
+            
+        } catch (Exception e) {
+            Log.e(TAG, "更新开始按钮状态失败", e);
+        }
+    }
+    
+    /**
+     * 检查配置是否有效（不显示Toast，仅用于验证）
+     */
+    private boolean isConfigurationValid() {
+        try {
+            String webhookUrl = txtWebhookUrl.getText().toString().trim();
+            String timeStr = txtTime.getText().toString().trim();
+            
+            // 检查是否为空
+            if (webhookUrl.equals("") || timeStr.equals("")) {
+                return false;
+            }
+            
+            // 验证URL格式
+            if (!webhookUrl.startsWith("http://") && !webhookUrl.startsWith("https://")) {
+                return false;
+            }
+            
+            // 验证时间间隔
+            try {
+                int time = Integer.parseInt(timeStr);
+                if (time < 10 || time > 10800) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            
+            return true;
+            
+        } catch (Exception e) {
+            Log.e(TAG, "配置验证失败", e);
+            return false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        // 检查权限状态
+        checkPermissionStatus();
+        
+        // 检查配置状态
+        checkConfigurationStatus();
+        
+        // 更新状态
+        updateStatusDisplay();
     }
     
     /**
@@ -284,31 +412,27 @@ public class MainActivity extends AppCompatActivity {
      */
     private int selectOptimalTheme(boolean isPowerSaveMode, boolean isNightMode, boolean isHighContrast) {
         try {
-            // 优先级1：省电模式 - 使用最基础的AppCompat主题
+            // 优先级1：省电模式 - 也使用NoActionBar主题，保证布局一致
             if (isPowerSaveMode) {
-                Log.d(TAG, "MainActivity省电模式检测，使用最基础AppCompat主题");
-                return R.style.Theme_AppCompat;
+                Log.d(TAG, "MainActivity省电模式检测，使用NoActionBar主题");
+                return R.style.Theme_AppCompat_DayNight_NoActionBar;
             }
-            
             // 优先级2：夜间模式 - 使用DayNight主题
             if (isNightMode) {
                 Log.d(TAG, "MainActivity夜间模式检测，使用DayNight主题");
                 return R.style.Theme_AppCompat_DayNight_NoActionBar;
             }
-            
-            // 优先级3：高对比度模式 - 使用基础AppCompat主题
+            // 优先级3：高对比度模式 - 使用基础AppCompat NoActionBar主题
             if (isHighContrast) {
-                Log.d(TAG, "MainActivity高对比度模式检测，使用基础AppCompat主题");
-                return R.style.Theme_AppCompat_NoActionBar;
+                Log.d(TAG, "MainActivity高对比度模式检测，使用基础AppCompat NoActionBar主题");
+                return R.style.Theme_AppCompat_DayNight_NoActionBar;
             }
-            
             // 优先级4：正常模式 - 使用标准DayNight主题
             Log.d(TAG, "MainActivity正常模式，使用标准DayNight主题");
             return R.style.Theme_AppCompat_DayNight_NoActionBar;
-            
         } catch (Exception e) {
             Log.e(TAG, "MainActivity选择主题失败，使用兜底主题", e);
-            return R.style.Theme_AppCompat;
+            return R.style.Theme_AppCompat_DayNight_NoActionBar;
         }
     }
     
@@ -489,55 +613,64 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "开始加载配置...");
         DataBaseOpenHelper dataBaseOpenHelper = new DataBaseOpenHelper(this);
         SQLiteDatabase db = dataBaseOpenHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + Contant.TABLENAME, null);
-            
+            Cursor cursor = db.rawQuery("select * from config", null);
             Log.d(TAG, "数据库记录数: " + cursor.getCount());
-        
-        // 如果数据库为空，插入默认配置
+            // 如果数据库为空，不自动插入默认配置，让用户手动输入
         if(cursor.getCount() == 0) {
-                Log.d(TAG, "数据库为空，插入默认配置");
-            String sql = "INSERT INTO " + Contant.TABLENAME + "(url, time, notification_enable) VALUES(?, ?, ?)";
-            db.execSQL(sql, new Object[]{BuildConfig.WEBHOOK_URL, 60, 0});
-            cursor = db.rawQuery("select * from " + Contant.TABLENAME, null);
-                Log.d(TAG, "插入默认配置后记录数: " + cursor.getCount());
-        }
-        
+                Log.d(TAG, "数据库为空，等待用户手动输入配置");
+                // 清空输入框，让用户手动输入
+                if (txtWebhookUrl != null) {
+                    txtWebhookUrl.setText("");
+                }
+                if (txtTime != null) {
+                    txtTime.setText("60");
+                }
+                if (sw_notification != null) {
+                    sw_notification.setChecked(false);
+                }
+                cursor.close();
+                db.close();
+                return;
+            }
+            boolean foundValidUrl = false;
         while (cursor.moveToNext()) {
-                String url = cursor.getString(0);
-                int time = cursor.getInt(5);
-                int notification = cursor.getInt(8);
-                
+                int urlIdx = cursor.getColumnIndex("url");
+                int timeIdx = cursor.getColumnIndex("time");
+                int notificationIdx = cursor.getColumnIndex("notification_enable");
+                String url = urlIdx >= 0 ? cursor.getString(urlIdx) : "";
+                int time = timeIdx >= 0 ? cursor.getInt(timeIdx) : 60;
+                int notification = notificationIdx >= 0 ? cursor.getInt(notificationIdx) : 0;
                 Log.d(TAG, "从数据库读取 - URL: " + url + ", Time: " + time + ", Notification: " + notification);
-                
+                // 只显示合法的URL
+                if (!foundValidUrl && url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
                 if (txtWebhookUrl != null) {
                     Log.d(TAG, "设置Webhook URL: " + url);
                     txtWebhookUrl.setText(url);
                 } else {
                     Log.e(TAG, "txtWebhookUrl为null");
                 }
-                
                 if (txtTime != null) {
                     Log.d(TAG, "设置Time: " + time);
                     txtTime.setText(time + "");
                 } else {
                     Log.e(TAG, "txtTime为null");
                 }
-                
                 if (sw_notification != null) {
                     Log.d(TAG, "设置Notification: " + (notification == 1));
-                    if(notification == 1)
-                sw_notification.setChecked(true);
-            else
-                sw_notification.setChecked(false);
+                        sw_notification.setChecked(notification == 1);
                 } else {
                     Log.e(TAG, "sw_notification为null");
                 }
+                    foundValidUrl = true;
+                }
             }
-        
+            // 如果没有找到合法URL，清空输入框
+            if (!foundValidUrl && txtWebhookUrl != null) {
+                txtWebhookUrl.setText("");
+            }
         cursor.close();
         db.close();
             Log.d(TAG, "配置加载完成");
-            
         } catch (Exception e) {
             Log.e(TAG, "loadConfiguration执行失败", e);
             Toast.makeText(this, "配置加载失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -545,6 +678,8 @@ public class MainActivity extends AppCompatActivity {
                 logAdapter.addLog("配置加载失败: " + e.getMessage(), "ERROR");
             }
         }
+        // 配置加载完成后更新按钮状态
+        updateStartButtonState();
     }
     
     private void setupEventListeners() {
@@ -598,6 +733,37 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
             
+            // 配置输入框监听器 - 实时验证
+            if (txtWebhookUrl != null) {
+                txtWebhookUrl.addTextChangedListener(new android.text.TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    
+                    @Override
+                    public void afterTextChanged(android.text.Editable s) {
+                        updateStartButtonState();
+                    }
+                });
+            }
+            
+            if (txtTime != null) {
+                txtTime.addTextChangedListener(new android.text.TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    
+                    @Override
+                    public void afterTextChanged(android.text.Editable s) {
+                        updateStartButtonState();
+                    }
+                });
+            }
+            
             // 通知开关监听器
             if (sw_notification != null) {
                 sw_notification.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
@@ -630,7 +796,7 @@ public class MainActivity extends AppCompatActivity {
             DataBaseOpenHelper dataBaseOpenHelper = new DataBaseOpenHelper(this);
             SQLiteDatabase db = dataBaseOpenHelper.getWritableDatabase();
             try {
-                String sql = "UPDATE " + Contant.TABLENAME + " SET notification_enable=?";
+                String sql = "UPDATE config SET notification_enable=?";
                 db.execSQL(sql, new Object[]{enabled ? 1 : 0});
                 Log.d(TAG, "通知设置已保存: " + (enabled ? "开启" : "关闭"));
             } finally {
@@ -806,38 +972,15 @@ public class MainActivity extends AppCompatActivity {
             
             logAdapter.addLog("开始启动位置服务...", "INFO");
             
-                // 输入验证
-                String webhookUrl = txtWebhookUrl.getText().toString().trim();
-                String timeStr = txtTime.getText().toString().trim();
-                
-                if(webhookUrl.equals("") || timeStr.equals("")) {
-                Toast.makeText(MainActivity.this, getString(R.string.fill_required), Toast.LENGTH_LONG).show();
-                logAdapter.addLog("配置验证失败：填写项不能为空", "ERROR");
+            // 验证配置
+            if (!validateConfiguration()) {
                     return;
                 }
                 
-                // 验证URL格式
-                if(!webhookUrl.startsWith("http://") && !webhookUrl.startsWith("https://")) {
-                Toast.makeText(MainActivity.this, getString(R.string.invalid_url), Toast.LENGTH_LONG).show();
-                logAdapter.addLog("配置验证失败：无效的URL格式", "ERROR");
-                    return;
-                }
-                
-                // 验证时间间隔
-                int time;
-                try {
-                    time = Integer.parseInt(timeStr);
-                    if(time < 10 || time > 10800) {
-                    Toast.makeText(MainActivity.this, "时间间隔必须在10-10800秒之间", Toast.LENGTH_LONG).show();
-                    logAdapter.addLog("配置验证失败：时间间隔必须在10-10800秒之间", "ERROR");
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                Toast.makeText(MainActivity.this, getString(R.string.invalid_format), Toast.LENGTH_LONG).show();
-                logAdapter.addLog("配置验证失败：时间间隔格式不正确", "ERROR");
-                logAdapter.addLog("错误详情: " + e.toString(), "ERROR");
-                return;
-            }
+            // 获取配置参数
+            String webhookUrl = txtWebhookUrl.getText().toString().trim();
+            String timeStr = txtTime.getText().toString().trim();
+            int time = Integer.parseInt(timeStr);
             
             logAdapter.addLog("配置验证通过", "SUCCESS");
             logAdapter.addLog("保存配置到数据库...", "INFO");
@@ -845,9 +988,19 @@ public class MainActivity extends AppCompatActivity {
             DataBaseOpenHelper dataBaseOpenHelper = new DataBaseOpenHelper(this);
                 SQLiteDatabase db = dataBaseOpenHelper.getWritableDatabase();
                 try {
-                    // 使用参数化查询防止SQL注入
-                    String sql = "UPDATE " + Contant.TABLENAME + " SET url=?, time=?, notification_enable=?";
+                Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM config", null);
+                cursor.moveToFirst();
+                int count = cursor.getInt(0);
+                cursor.close();
+                if (count == 0) {
+                    // 插入
+                    String sql = "INSERT INTO config (url, time, notification_enable) VALUES (?, ?, ?)";
                     db.execSQL(sql, new Object[]{webhookUrl, time, sw_notification.isChecked() ? 1 : 0});
+                } else {
+                    // 更新
+                    String sql = "UPDATE config SET url=?, time=?, notification_enable=?";
+                    db.execSQL(sql, new Object[]{webhookUrl, time, sw_notification.isChecked() ? 1 : 0});
+                }
                 logAdapter.addLog("配置已保存到数据库", "SUCCESS");
                 
                 // 更新服务中的配置
@@ -874,10 +1027,15 @@ public class MainActivity extends AppCompatActivity {
             logAdapter.addLog("启动位置服务...", "INFO");
                     ltmService.setFromMain(true);
                     Intent intent = new Intent(MainActivity.this, ltmService.class);
-                    startService(intent);
+            stopService(intent); // 先杀死服务
+            startService(intent); // 再重启服务
                     Toast.makeText(MainActivity.this, getString(R.string.service_started), Toast.LENGTH_SHORT).show();
                     
                     logAdapter.addLog("位置服务启动中...", "INFO");
+            
+            // 立即上报一次
+            Intent immediateReportIntent = new Intent("com.ljs.locationtracker.IMMEDIATE_REPORT");
+            sendBroadcast(immediateReportIntent);
                     
                     // 切换到状态面板
                     switchToStatusTab();
@@ -944,6 +1102,15 @@ public class MainActivity extends AppCompatActivity {
                 };
             }
             
+            // Android 10+ (API 29) 需要后台定位权限
+            if (Build.VERSION.SDK_INT >= 29) {
+                logAdapter.addLog("Android版本 >= 29，需要后台定位权限", "INFO");
+                String[] newPerms = new String[perms.length + 1];
+                System.arraycopy(perms, 0, newPerms, 0, perms.length);
+                newPerms[perms.length] = Manifest.permission.ACCESS_BACKGROUND_LOCATION;
+                perms = newPerms;
+            }
+            
             // Android 13+ (API 33) 需要通知权限
             if (Build.VERSION.SDK_INT >= 33) {
                 logAdapter.addLog("Android版本 >= 33，需要通知权限", "INFO");
@@ -967,17 +1134,18 @@ public class MainActivity extends AppCompatActivity {
             if (needRequest) {
                 logAdapter.addLog("开始申请权限...", "INFO");
                 
-                // 显示权限申请说明对话框
-                PermissionGuideDialog.showPermissionRequestDialog(this);
-                
-                // 延迟1秒后申请权限，让用户先看到说明
-                new Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                // 直接申请权限，不显示说明对话框
                         ActivityCompat.requestPermissions(MainActivity.this, permissions, 1);
-                    }
-                }, 1000);
             } else {
+                // 检查是否需要申请后台定位权限
+                if (Build.VERSION.SDK_INT >= 29) {
+                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) 
+                            != PackageManager.PERMISSION_GRANTED) {
+                        logAdapter.addLog("需要申请后台定位权限", "INFO");
+                        // 不显示后台定位权限对话框，直接继续
+                    }
+                }
+                
                 logAdapter.addLog("所有权限已授予", "SUCCESS");
                 logAdapter.addLog("=== 自动启动位置服务 ===", "INFO");
                 
@@ -1010,13 +1178,21 @@ public class MainActivity extends AppCompatActivity {
             }
             
             if (!allGranted) {
-                Toast.makeText(this, getString(R.string.permission_required), Toast.LENGTH_LONG).show();
                 logAdapter.addLog("权限申请失败，部分功能可能无法使用", "ERROR");
-                
-                // 显示权限被拒绝的引导对话框
-                PermissionGuideDialog.showPermissionDeniedDialog(this);
+                // 不显示权限被拒绝的引导对话框，直接继续
             } else {
-                logAdapter.addLog("权限申请成功", "SUCCESS");
+                logAdapter.addLog("基础权限申请成功", "SUCCESS");
+                
+                // 检查是否需要申请后台定位权限
+                if (Build.VERSION.SDK_INT >= 29) {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) 
+                            != PackageManager.PERMISSION_GRANTED) {
+                        logAdapter.addLog("需要申请后台定位权限", "INFO");
+                        // 不显示后台定位权限对话框，直接继续
+                    }
+                }
+                
+                logAdapter.addLog("所有权限已授予", "SUCCESS");
                 logAdapter.addLog("=== 自动启动位置服务 ===", "INFO");
                 
                 // 延迟2秒后自动启动位置服务，确保UI完全初始化
@@ -1093,7 +1269,29 @@ public class MainActivity extends AppCompatActivity {
      */
     private void autoStartLocationService() {
         try {
+            // 检查服务是否已经在运行
+            if (isServiceRunning()) {
+                logAdapter.addLog("⚠️ 位置服务已在运行，跳过自动启动", "WARNING");
+                return;
+            }
+            
             logAdapter.addLog("检查配置参数...", "INFO");
+            
+            // 检查数据库是否有配置
+            DataBaseOpenHelper dataBaseOpenHelper = new DataBaseOpenHelper(this);
+            SQLiteDatabase db = dataBaseOpenHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("select * from config", null);
+            
+            if (cursor.getCount() == 0) {
+                logAdapter.addLog("数据库中没有配置信息", "WARNING");
+                logAdapter.addLog("请手动填写配置后点击开始定位", "INFO");
+                cursor.close();
+                db.close();
+                return;
+            }
+            
+            cursor.close();
+            db.close();
             
             // 获取配置参数
             String webhookUrl = txtWebhookUrl.getText().toString().trim();
@@ -1135,11 +1333,11 @@ public class MainActivity extends AppCompatActivity {
             
             // 保存配置到数据库
             logAdapter.addLog("保存配置到数据库...", "INFO");
-            DataBaseOpenHelper dataBaseOpenHelper = new DataBaseOpenHelper(this);
-            SQLiteDatabase db = dataBaseOpenHelper.getWritableDatabase();
+            DataBaseOpenHelper dataBaseOpenHelper2 = new DataBaseOpenHelper(this);
+            SQLiteDatabase db2 = dataBaseOpenHelper2.getWritableDatabase();
             try {
-                String sql = "UPDATE " + Contant.TABLENAME + " SET url=?, time=?, notification_enable=?";
-                db.execSQL(sql, new Object[]{webhookUrl, time, sw_notification.isChecked() ? 1 : 0});
+                String sql = "UPDATE config SET url=?, time=?, notification_enable=?";
+                db2.execSQL(sql, new Object[]{webhookUrl, time, sw_notification.isChecked() ? 1 : 0});
                 logAdapter.addLog("配置保存成功", "SUCCESS");
                 
                 // 更新服务中的配置
@@ -1158,20 +1356,21 @@ public class MainActivity extends AppCompatActivity {
                 logAdapter.addLog("错误详情: " + e.toString(), "ERROR");
                 return;
             } finally {
-                db.close();
+                db2.close();
             }
             
             // 启动位置服务
             logAdapter.addLog("启动位置服务...", "INFO");
-            ltmService.setFromMain(true);
-            Intent intent = new Intent(MainActivity.this, ltmService.class);
-            startService(intent);
-            Toast.makeText(MainActivity.this, getString(R.string.service_started), Toast.LENGTH_SHORT).show();
-            
             logAdapter.addLog("位置服务启动中...", "INFO");
             
-            // 切换到状态面板
-            switchToStatusTab();
+            Intent serviceIntent = new Intent(this, ltmService.class);
+            if (Build.VERSION.SDK_INT >= 26) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
+            
+            logAdapter.addLog("位置服务启动命令已发送", "SUCCESS");
             
             // 延迟检查服务是否正常启动
             new Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -1319,6 +1518,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "logAdapter为null，无法显示设备信息");
             }
             
+            // 检查是否应该显示设备优化建议
+            if (PermissionGuideDialog.shouldShowDeviceOptimization(this)) {
             // 显示设备优化对话框（延迟3秒，避免与权限申请对话框冲突）
             new Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
@@ -1326,6 +1527,12 @@ public class MainActivity extends AppCompatActivity {
                     PermissionGuideDialog.showDeviceOptimizationDialog(MainActivity.this, brand);
                 }
             }, 3000);
+            } else {
+                Log.d(TAG, "用户已选择不再提醒设备优化建议，跳过显示");
+                if (logAdapter != null) {
+                    logAdapter.addLog("ℹ️ 用户已选择不再提醒设备优化建议", "INFO");
+                }
+            }
             
             // 应用设备优化策略
             DeviceOptimizationHelper.applyDeviceOptimization(this);
@@ -1345,7 +1552,9 @@ public class MainActivity extends AppCompatActivity {
     private void showDeviceOptimizationDialog() {
         try {
             DeviceOptimizationHelper.DeviceBrand brand = DeviceOptimizationHelper.detectDeviceBrand();
+            // 手动点击设备优化按钮时，总是显示对话框，不受"不再提醒"设置影响
             PermissionGuideDialog.showDeviceOptimizationDialog(this, brand);
+            Log.d(TAG, "用户手动点击设备优化按钮，显示优化建议");
         } catch (Exception e) {
             Log.e(TAG, "显示设备优化对话框失败", e);
             Toast.makeText(this, "显示设备优化对话框失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -1376,7 +1585,83 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 检查权限状态并更新UI
+     */
+    private void checkPermissionStatus() {
+        boolean hasBasicLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) 
+                == PackageManager.PERMISSION_GRANTED;
+        boolean hasCoarseLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) 
+                == PackageManager.PERMISSION_GRANTED;
+        boolean hasBackgroundLocation = true;
+        
+        if (Build.VERSION.SDK_INT >= 29) {
+            hasBackgroundLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) 
+                    == PackageManager.PERMISSION_GRANTED;
+        }
+        
+        if (hasBasicLocation && hasCoarseLocation && hasBackgroundLocation) {
+            logAdapter.addLog("✅ 所有位置权限已授予", "SUCCESS");
+            logAdapter.addLog("✅ 基础定位权限: 已授予", "SUCCESS");
+            if (Build.VERSION.SDK_INT >= 29) {
+                logAdapter.addLog("✅ 后台定位权限: 已授予", "SUCCESS");
+            }
+        } else {
+            logAdapter.addLog("❌ 位置权限不完整", "ERROR");
+            if (!hasBasicLocation) {
+                logAdapter.addLog("❌ 基础定位权限: 未授予", "ERROR");
+            }
+            if (!hasCoarseLocation) {
+                logAdapter.addLog("❌ 粗略定位权限: 未授予", "ERROR");
+            }
+            if (Build.VERSION.SDK_INT >= 29 && !hasBackgroundLocation) {
+                logAdapter.addLog("❌ 后台定位权限: 未授予", "ERROR");
+            }
+        }
+    }
 
+    /**
+     * 验证配置是否有效
+     */
+    private boolean validateConfiguration() {
+        try {
+            String webhookUrl = txtWebhookUrl.getText().toString().trim();
+            String timeStr = txtTime.getText().toString().trim();
+            
+            // 检查是否为空
+            if (webhookUrl.equals("") || timeStr.equals("")) {
+                logAdapter.addLog("❌ 配置验证失败：填写项不能为空", "ERROR");
+                return false;
+            }
+            
+            // 验证URL格式
+            if (!webhookUrl.startsWith("http://") && !webhookUrl.startsWith("https://")) {
+                logAdapter.addLog("❌ 配置验证失败：无效的URL格式", "ERROR");
+                logAdapter.addLog("URL必须以http://或https://开头", "INFO");
+                return false;
+            }
+            
+            // 验证时间间隔
+            try {
+                int time = Integer.parseInt(timeStr);
+                if (time < 10 || time > 10800) {
+                    logAdapter.addLog("❌ 配置验证失败：时间间隔必须在10-10800秒之间", "ERROR");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                logAdapter.addLog("❌ 配置验证失败：时间间隔格式不正确", "ERROR");
+                return false;
+            }
+            
+            logAdapter.addLog("✅ 配置验证通过", "SUCCESS");
+            return true;
+            
+        } catch (Exception e) {
+            Log.e(TAG, "配置验证失败", e);
+            logAdapter.addLog("❌ 配置验证异常: " + e.getMessage(), "ERROR");
+            return false;
+        }
+    }
     
     /**
      * 显示崩溃日志管理对话框
@@ -1492,6 +1777,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * 动态调整状态栏图标颜色
+     */
+    private void adjustStatusBarIcons() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Android 6.0+ 可以根据背景颜色调整状态栏图标颜色
+                View decorView = getWindow().getDecorView();
+                int flags = decorView.getSystemUiVisibility();
+                
+                // 检测当前主题模式
+                boolean isNightMode = (getResources().getConfiguration().uiMode & 
+                    Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+                
+                if (isNightMode) {
+                    // 夜间模式：状态栏图标为浅色
+                    flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    Log.d(TAG, "夜间模式：状态栏图标设置为浅色");
+                } else {
+                    // 日间模式：状态栏图标为深色
+                    flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    Log.d(TAG, "日间模式：状态栏图标设置为深色");
+                }
+                
+                decorView.setSystemUiVisibility(flags);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "调整状态栏图标颜色失败", e);
+        }
+    }
+
+    /**
      * 设置透明状态栏（兼容Android 4.4及以上）
      */
     private void setupTransparentStatusBar() {
@@ -1513,6 +1829,10 @@ public class MainActivity extends AppCompatActivity {
                 // Android 4.0-4.3 不支持，自动忽略
                 Log.d(TAG, "Android 4.0-4.3不支持透明状态栏，自动忽略");
             }
+            
+            // 调整状态栏图标颜色
+            adjustStatusBarIcons();
+            
         } catch (Exception e) {
             Log.e(TAG, "设置透明状态栏失败", e);
             // 失败时不影响应用正常运行
