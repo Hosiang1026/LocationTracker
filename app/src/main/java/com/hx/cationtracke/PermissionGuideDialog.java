@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.Log;
+import com.hx.cationtracke.DeviceOptimizationHelper;
 
 public class PermissionGuideDialog {
     private static final String TAG = "PermissionGuide";

@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 public class Contant {
     public static  final String DATABASE="ltm.db";

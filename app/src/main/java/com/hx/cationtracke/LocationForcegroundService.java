@@ -1,4 +1,4 @@
-package com.ljs.locationtracker;
+package com.hx.cationtracke;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
