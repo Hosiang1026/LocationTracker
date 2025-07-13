@@ -380,6 +380,9 @@ cp local.properties.example local.properties
 
 2. **编辑local.properties文件**:
 ```properties
+# SDK路径
+sdk.dir=你的本地安卓SDK路径
+
 # 签名配置（Release版本必需）
 KEYSTORE_PASSWORD=你的签名密码
 KEY_ALIAS=你的key别名
