@@ -17,6 +17,7 @@ public class PermissionGuideDialog {
             String title = "权限申请";
             String message = "为了确保位置上报功能正常工作，需要以下权限：\n\n" +
                     "• 定位权限：获取设备位置信息\n" +
+                    "• 后台定位权限：在应用后台运行时获取位置（Android 10+）\n" +
                     "• 网络权限：发送位置数据\n" +
                     "• 前台服务权限：保持应用在后台运行\n\n" +
                     "请在接下来的对话框中授予这些权限。";
@@ -62,11 +63,39 @@ public class PermissionGuideDialog {
             builder.setMessage(message);
             builder.setPositiveButton("前往设置", (dialog, which) -> openDeviceSettings(context, brand.name()));
             builder.setNegativeButton("稍后设置", (dialog, which) -> dialog.dismiss());
-            builder.setNeutralButton("不再提醒", (dialog, which) -> dialog.dismiss());
+            builder.setNeutralButton("不再提醒", (dialog, which) -> {
+                // 保存用户选择"不再提醒"
+                saveDeviceOptimizationDismissed(context);
+                dialog.dismiss();
+            });
             builder.setCancelable(false);
             builder.show();
         } catch (Exception e) {
             Log.e(TAG, "显示设备优化对话框失败", e);
+        }
+    }
+    
+    // 保存用户选择"不再提醒"
+    private static void saveDeviceOptimizationDismissed(Context context) {
+        try {
+            android.content.SharedPreferences prefs = context.getSharedPreferences("device_optimization", Context.MODE_PRIVATE);
+            android.content.SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("dismissed", true);
+            editor.apply();
+            Log.d(TAG, "用户选择不再提醒设备优化建议");
+        } catch (Exception e) {
+            Log.e(TAG, "保存设备优化提醒设置失败", e);
+        }
+    }
+    
+    // 检查是否应该显示设备优化建议
+    public static boolean shouldShowDeviceOptimization(Context context) {
+        try {
+            android.content.SharedPreferences prefs = context.getSharedPreferences("device_optimization", Context.MODE_PRIVATE);
+            return !prefs.getBoolean("dismissed", false);
+        } catch (Exception e) {
+            Log.e(TAG, "检查设备优化提醒设置失败", e);
+            return true; // 出错时默认显示
         }
     }
 

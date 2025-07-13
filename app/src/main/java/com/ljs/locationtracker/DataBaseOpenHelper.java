@@ -17,26 +17,22 @@ public class DataBaseOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate: create");
-        String sql="create table "+Contant.TABLENAME+" (url varchar,port integer,id varchar,name varchar,pwd varchar,time integer,topic varchar,mode integer,notification_enable integer default 0)";
-        db.execSQL(sql);
+        // 配置表
+        String sqlConfig = "CREATE TABLE IF NOT EXISTS config (id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR, time INTEGER, notification_enable INTEGER DEFAULT 0)";
+        db.execSQL(sqlConfig);
+        // 定位缓存表
+        String sqlCache = "CREATE TABLE IF NOT EXISTS location_cache (id INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT, created_at INTEGER)";
+        db.execSQL(sqlCache);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-     switch(oldVersion)
-     {
-         case 1:
-             switch(newVersion)
-             {
-                 case 2:
-                     db.execSQL("alter table "+Contant.TABLENAME+" add column notification_enable integer default 0");
-                     break;
-                 default:
-                     break;
-             }
-             break;
-         default:
-             break;
-     }
+        // 兼容老表结构
+        if (oldVersion < 2) {
+            // 老版本升级到新结构
+            db.execSQL("CREATE TABLE IF NOT EXISTS config (id INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR, time INTEGER, notification_enable INTEGER DEFAULT 0)");
+            db.execSQL("CREATE TABLE IF NOT EXISTS location_cache (id INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT, created_at INTEGER)");
+        }
+        // 其他升级逻辑可按需补充
     }
 }

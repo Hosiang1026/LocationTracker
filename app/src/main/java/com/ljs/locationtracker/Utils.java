@@ -9,6 +9,13 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import androidx.core.app.NotificationCompat;
 
 public class Utils {
     public static final int NOTIFY_ID = 2001;
@@ -34,9 +41,10 @@ public class Utils {
             }
             
             Context mContext = context.getApplicationContext();
-            Notification.Builder builder = null;
+            NotificationCompat.Builder builder = null;
             Notification notification = null;
             
+            String channelId = mContext.getPackageName();
             if (android.os.Build.VERSION.SDK_INT >= 26) {
                 //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
                 if (null == notificationManager) {
@@ -46,7 +54,6 @@ public class Utils {
                         return null;
                     }
                 }
-                String channelId = mContext.getPackageName();
                 if (!isCreatedChannel) {
                     try {
                         NotificationChannel notificationChannel = new NotificationChannel(channelId,
@@ -62,10 +69,10 @@ public class Utils {
                         return null;
                     }
                 }
-                builder = new Notification.Builder(mContext, channelId);
+                builder = new NotificationCompat.Builder(mContext, channelId);
             } else {
-                // Android 4.0-7.1 使用旧的通知方式
-                builder = new Notification.Builder(mContext);
+                // Android 4.0-7.1 使用兼容库
+                builder = new NotificationCompat.Builder(mContext);
             }
 
             // 构建通知内容 - 显示当前上报时间
@@ -78,12 +85,7 @@ public class Utils {
                     .setContentText(contentText)  // 只设置内容，不设置标题
                     .setWhen(System.currentTimeMillis());
 
-            if (Build.VERSION.SDK_INT >= 16) {
-                notification = builder.build();
-            } else {
-                // Android 4.0-4.3 使用旧的通知构建方式
-                notification = builder.getNotification();
-            }
+            notification = builder.build();
             return notification;
         } catch (Exception e) {
             Log.e("Utils", "创建通知失败", e);
@@ -110,5 +112,62 @@ public class Utils {
             e.printStackTrace();
         }
         return appName;
+    }
+
+    /**
+     * 检查并申请后台定位权限（Android 10+）
+     */
+    public static boolean checkAndRequestBackgroundLocation(Context context) {
+        if (Build.VERSION.SDK_INT >= 29) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) 
+                    != PackageManager.PERMISSION_GRANTED) {
+                // 显示后台定位权限说明对话框
+                showBackgroundLocationDialog(context);
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * 显示后台定位权限说明对话框
+     */
+    private static void showBackgroundLocationDialog(Context context) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("后台定位权限");
+            builder.setMessage("为了在应用后台运行时也能获取位置信息，需要授予后台定位权限。\n\n" +
+                    "请在接下来的系统设置中，选择\"始终允许\"以启用后台定位功能。");
+            builder.setPositiveButton("去设置", (dialog, which) -> {
+                // 跳转到应用设置页面
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                intent.setData(uri);
+                context.startActivity(intent);
+            });
+            builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+            builder.setCancelable(false);
+            builder.show();
+        } catch (Exception e) {
+            Log.e("Utils", "显示后台定位权限对话框失败", e);
+        }
+    }
+    
+    /**
+     * 检查所有位置相关权限是否已授予
+     */
+    public static boolean checkAllLocationPermissions(Context context) {
+        boolean hasBasicLocation = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
+                == PackageManager.PERMISSION_GRANTED;
+        boolean hasCoarseLocation = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) 
+                == PackageManager.PERMISSION_GRANTED;
+        boolean hasBackgroundLocation = true; // 默认true，避免Android 10以下版本的问题
+        
+        if (Build.VERSION.SDK_INT >= 29) {
+            hasBackgroundLocation = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) 
+                    == PackageManager.PERMISSION_GRANTED;
+        }
+        
+        return hasBasicLocation && hasCoarseLocation && hasBackgroundLocation;
     }
 }

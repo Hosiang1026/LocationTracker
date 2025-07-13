@@ -74,7 +74,7 @@ public class LocationWorker extends Worker {
             String webhookUrl = context.getSharedPreferences("config", Context.MODE_PRIVATE).getString("webhook_url", "");
             if (hasNetwork && webhookUrl != null && !webhookUrl.isEmpty()) {
                 // 有网时，批量读取并上报所有缓存
-                Cursor cursor = db.rawQuery("SELECT rowid, url FROM " + Contant.TABLENAME + " ORDER BY rowid ASC LIMIT 10", null);
+                Cursor cursor = db.rawQuery("SELECT id, data FROM location_cache ORDER BY id ASC LIMIT 10", null);
                 ArrayList<Long> successRowIds = new ArrayList<>();
                 while (cursor.moveToNext()) {
                     long rowId = cursor.getLong(0);
@@ -86,20 +86,20 @@ public class LocationWorker extends Worker {
                 cursor.close();
                 // 只删除成功上报的数据
                 for (Long rowId : successRowIds) {
-                    db.delete(Contant.TABLENAME, "rowid=?", new String[]{String.valueOf(rowId)});
+                    db.delete("location_cache", "id=?", new String[]{String.valueOf(rowId)});
                 }
                 // 上报本次数据
                 if (performSingleWebhookRequest(context, data, webhookUrl)) {
                     // 不缓存
                 } else {
                     // 失败则缓存，保证最多10条
-                    db.execSQL("INSERT INTO " + Contant.TABLENAME + "(url) VALUES(?)", new Object[]{data});
-                    db.execSQL("DELETE FROM " + Contant.TABLENAME + " WHERE rowid NOT IN (SELECT rowid FROM " + Contant.TABLENAME + " ORDER BY rowid DESC LIMIT 10)");
+                    db.execSQL("INSERT INTO location_cache (data, created_at) VALUES(?, ?)", new Object[]{data, System.currentTimeMillis()});
+                    db.execSQL("DELETE FROM location_cache WHERE id NOT IN (SELECT id FROM location_cache ORDER BY id DESC LIMIT 10)");
                 }
             } else {
                 // 无网时缓存，保证最多10条
-                db.execSQL("INSERT INTO " + Contant.TABLENAME + "(url) VALUES(?)", new Object[]{data});
-                db.execSQL("DELETE FROM " + Contant.TABLENAME + " WHERE rowid NOT IN (SELECT rowid FROM " + Contant.TABLENAME + " ORDER BY rowid DESC LIMIT 10)");
+                db.execSQL("INSERT INTO location_cache (data, created_at) VALUES(?, ?)", new Object[]{data, System.currentTimeMillis()});
+                db.execSQL("DELETE FROM location_cache WHERE id NOT IN (SELECT id FROM location_cache ORDER BY id DESC LIMIT 10)");
             }
             db.close();
             return Result.success();
