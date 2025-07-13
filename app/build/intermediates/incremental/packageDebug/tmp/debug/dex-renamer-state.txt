@@ -1,0 +1,4 @@
+#Sat Jul 12 23:49:11 CST 2025
+base.0=E\:\\Project\\Android\\LocationTracker\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

@@ -8,8 +8,8 @@
 
 [![Android版本](https://img.shields.io/badge/Android-4.0+-green.svg)](https://developer.android.com/about/versions/android-4.0)
 [![版本号](https://img.shields.io/badge/版本-V2.1.5-blue.svg)](https://github.com/your-repo/LocationTracker/releases)
-[![界面设计](https://img.shields.io/badge/界面-单面板设计-brightgreen.svg)](./UI_PREVIEW.html)
-[![平板界面](https://img.shields.io/badge/平板界面-大屏优化-blue.svg)](./TABLET_UI_PREVIEW.html)
+[![界面设计](https://img.shields.io/badge/界面-单面板设计-brightgreen.svg)](https://haoxiang.eu.org/ui/UI_PREVIEW)
+[![平板界面](https://img.shields.io/badge/平板界面-大屏优化-blue.svg)](https://haoxiang.eu.org/ui/TABLET_UI_PREVIEW)
 [![主题兼容](https://img.shields.io/badge/主题-智能兼容-orange.svg)](https://github.com/your-repo/LocationTracker#-主题兼容性修复详情)
 
 > 📱 **智能位置上报应用** - 通过HTTP Webhook将安卓设备位置数据发送到Home Assistant或其他服务器
