@@ -1,0 +1,254 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.hx.locationtracker"
+4    android:versionCode="4"
+5    android:versionName="2.1.4" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="14"
+8-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="33" />
+9-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.WAKE_LOCK" />
+11-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:5:5-68
+11-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:5:22-65
+12
+13    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
+14    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
+15    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+16    <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
+17    <!-- <uses-permission android:name="android.permission.DEVICE_POWER" /> -->
+18    <!-- <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
+19    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
+20    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
+21    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
+22    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+22-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:16:5-79
+22-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:16:22-76
+23    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+23-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:17:5-76
+23-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:17:22-73
+24    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+24-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:18:5-76
+24-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:18:22-73
+25    <uses-permission android:name="android.permission.INTERNET" /> <!-- 需要运行时注册的权限 -->
+25-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:19:5-67
+25-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:19:22-64
+26    <!-- 用于进行网络定位 -->
+27    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 用于访问GPS定位 -->
+27-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:21:5-81
+27-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:21:22-78
+28    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 用于提高GPS定位速度 -->
+28-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:22:5-79
+28-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:22:22-76
+29    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" /> <!-- 写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据 -->
+29-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:23:5-89
+29-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:23:22-86
+30    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+31    <!-- 读取缓存数据 -->
+32    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 用于读取手机当前的状态 -->
+32-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:25:5-80
+32-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:25:22-77
+33    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 更改设置 -->
+33-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:26:5-75
+33-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:26:22-72
+34    <uses-permission android:name="android.permission.WRITE_SETTINGS" /> <!-- 3.2.0版本增加 -->
+34-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:27:5-73
+34-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:27:22-70
+35    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- 3.2.0版本增加 -->
+35-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:28:5-74
+35-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:28:22-71
+36    <uses-permission android:name="android.permission.BLUETOOTH" />
+36-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:29:5-68
+36-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:29:22-65
+37    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+37-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:30:5-85
+37-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:30:22-82
+38    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+38-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:31:5-77
+38-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:31:22-74
+39    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+39-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:32:5-81
+39-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:32:22-78
+40
+41    <!-- Android 13+ 通知权限 -->
+42    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+42-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:35:5-77
+42-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:35:22-74
+43
+44    <!-- 荣耀/华为手机特殊权限 -->
+45    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+45-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:38:5-95
+45-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:38:22-92
+46    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+46-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:39:5-78
+46-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:39:22-75
+47
+48    <!-- 荣耀/华为手机自启动权限 -->
+49    <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT" />
+49-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:42:5-97
+49-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:42:22-94
+50    <uses-permission android:name="com.huawei.permission.sec.MDM" />
+50-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:43:5-69
+50-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:43:22-66
+51    <uses-permission android:name="com.huawei.permission.sec.MDM_INTERNAL" />
+51-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:44:5-78
+51-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:44:22-75
+52
+53    <application
+53-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:46:5-121:19
+54        android:name="com.ljs.locationtracker.LocationTrackerApplication"
+54-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:47:9-51
+55        android:allowBackup="true"
+55-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:48:9-35
+56        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+56-->[androidx.core:core:1.5.0] C:\Users\Administrator\.gradle\caches\transforms-2\files-2.1\cc5e9dcdc56dc39042f72c501235e83f\core-1.5.0\AndroidManifest.xml:24:18-86
+57        android:hardwareAccelerated="true"
+57-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:56:9-43
+58        android:icon="@mipmap/ha"
+58-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:49:9-34
+59        android:label="@string/app_name"
+59-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:50:9-41
+60        android:largeHeap="true"
+60-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:57:9-33
+61        android:persistent="true"
+61-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:51:9-34
+62        android:process=":location"
+62-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:55:9-36
+63        android:roundIcon="@mipmap/ha"
+63-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:52:9-39
+64        android:supportsRtl="true"
+64-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:53:9-35
+65        android:theme="@style/Theme.LocationTracker" >
+65-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:54:9-53
+66        <service
+66-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:59:9-63:39
+67            android:name="com.ljs.locationtracker.LocationForcegroundService"
+67-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:60:13-55
+68            android:foregroundServiceType="location"
+68-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:61:13-53
+69            android:priority="1000"
+69-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:63:13-36
+70            android:process=":location" />
+70-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:62:13-40
+71
+72        <activity
+72-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:65:9-69:46
+73            android:name="com.ljs.locationtracker.CheckPermissionsActivity"
+73-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:66:13-53
+74            android:exported="false"
+74-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:68:13-37
+75            android:launchMode="singleTop"
+75-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:69:13-43
+76            android:theme="@style/Theme.LocationTracker" />
+76-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:67:13-57
+77
+78        <receiver
+78-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:71:9-92:20
+79            android:name="com.ljs.locationtracker.BootBroadcastReceiver"
+79-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:72:13-50
+80            android:enabled="true"
+80-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:73:13-35
+81            android:exported="true"
+81-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:74:13-36
+82            android:priority="1000"
+82-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:76:13-36
+83            android:process=":location" >
+83-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:75:13-40
+84            <intent-filter android:priority="1000" >
+84-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:77:13-91:29
+84-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:77:28-51
+85                <action android:name="android.intent.action.BOOT_COMPLETED" />
+85-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:78:17-79
+85-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:78:25-76
+86                <action android:name="android.intent.action.SCREEN_ON" />
+86-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:79:17-74
+86-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:79:25-71
+87                <action android:name="android.intent.action.SCREEN_OFF" />
+87-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:80:17-75
+87-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:80:25-72
+88                <action android:name="android.intent.action.USER_PRESENT" />
+88-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:81:17-77
+88-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:81:25-74
+89                <action android:name="com.ljs.ltmservice.start" />
+89-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:82:17-67
+89-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:82:25-64
+90                <!-- 荣耀/华为手机特殊广播 -->
+91                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+91-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:84:17-84
+91-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:84:25-81
+92                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+92-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:85:17-81
+92-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:85:25-78
+93                <action android:name="android.intent.action.PACKAGE_ADDED" />
+93-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:86:17-78
+93-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:86:25-75
+94                <action android:name="android.intent.action.PACKAGE_RESTARTED" />
+94-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:87:17-82
+94-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:87:25-79
+95                <action android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+95-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:88:17-94
+95-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:88:25-91
+96                <action android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+96-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:89:17-95
+96-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:89:25-92
+97                <action android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" />
+97-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:90:17-96
+97-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:90:25-93
+98            </intent-filter>
+99        </receiver>
+100
+101        <service
+101-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:94:9-100:39
+102            android:name="com.ljs.locationtracker.ltmService"
+102-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:95:13-39
+103            android:enabled="true"
+103-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:96:13-35
+104            android:exported="true"
+104-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:97:13-36
+105            android:foregroundServiceType="location"
+105-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:98:13-53
+106            android:priority="1000"
+106-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:100:13-36
+107            android:process=":location" />
+107-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:99:13-40
+108        <service
+108-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:102:9-106:43
+109            android:name="com.ljs.locationtracker.ConfigSyncService"
+109-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:103:13-46
+110            android:enabled="true"
+110-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:104:13-35
+111            android:exported="false"
+111-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:105:13-37
+112            android:process=":location" />
+112-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:106:13-40
+113
+114        <activity
+114-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:108:9-120:20
+115            android:name="com.ljs.locationtracker.MainActivity"
+115-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:109:13-41
+116            android:configChanges="keyboardHidden|orientation|screenSize"
+116-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:110:13-74
+117            android:exported="true"
+117-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:113:13-36
+118            android:launchMode="singleTop"
+118-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:114:13-43
+119            android:theme="@style/Theme.LocationTracker"
+119-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:111:13-57
+120            android:windowSoftInputMode="adjustResize|stateHidden" >
+120-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:112:13-67
+121            <intent-filter>
+121-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:115:13-119:29
+122                <action android:name="android.intent.action.MAIN" />
+122-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:116:17-69
+122-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:116:25-66
+123
+124                <category android:name="android.intent.category.LAUNCHER" />
+124-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:118:17-77
+124-->E:\Project\Android\LocationTracker\app\src\main\AndroidManifest.xml:118:27-74
+125            </intent-filter>
+126        </activity>
+127    </application>
+128
+129</manifest>
