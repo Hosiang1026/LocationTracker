@@ -12,8 +12,7 @@
         android:orientation="vertical"
         android:background="@drawable/header_gradient"
         android:padding="10dp"
-        android:gravity="center"
-        android:id="@+id/header_layout">
+        android:gravity="center">
 
         <TextView
             android:id="@+id/tv_app_title"
