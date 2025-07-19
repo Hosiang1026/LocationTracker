@@ -19,7 +19,7 @@ android {
         applicationId "com.hx.locationtracker"
         minSdkVersion 14
         targetSdkVersion 33
-        versionCode 215
+        versionCode 216
         versionName "2.1.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
