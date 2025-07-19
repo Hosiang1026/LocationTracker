@@ -54,8 +54,11 @@ public class PermissionGuideDialog {
         }
     }
 
-    // 设备优化建议对话框
-    public static void showDeviceOptimizationDialog(Context context, DeviceOptimizationHelper.DeviceBrand brand) {
+    // 设备优化建议对话框（支持 OnDismissListener 回调）
+    public interface OnDismissListener {
+        void onDismiss();
+    }
+    public static void showDeviceOptimizationDialog(Context context, DeviceOptimizationHelper.DeviceBrand brand, final OnDismissListener onDismissListener) {
         try {
             String title = "设备优化建议";
             String message = DeviceOptimizationHelper.getOptimizationTips(brand);
@@ -65,15 +68,24 @@ public class PermissionGuideDialog {
             builder.setPositiveButton("前往设置", (dialog, which) -> openDeviceSettings(context, brand.name()));
             builder.setNegativeButton("稍后设置", (dialog, which) -> dialog.dismiss());
             builder.setNeutralButton("不再提醒", (dialog, which) -> {
-                // 保存用户选择"不再提醒"
                 saveDeviceOptimizationDismissed(context);
                 dialog.dismiss();
             });
             builder.setCancelable(false);
-            builder.show();
+            AlertDialog dialog = builder.create();
+            if (onDismissListener != null) {
+                dialog.setOnDismissListener(d -> onDismissListener.onDismiss());
+            }
+            dialog.show();
         } catch (Exception e) {
             Log.e(TAG, "显示设备优化对话框失败", e);
+            if (onDismissListener != null) onDismissListener.onDismiss();
         }
+    }
+    
+    // 兼容老代码：无回调的重载
+    public static void showDeviceOptimizationDialog(Context context, DeviceOptimizationHelper.DeviceBrand brand) {
+        showDeviceOptimizationDialog(context, brand, null);
     }
     
     // 保存用户选择"不再提醒"

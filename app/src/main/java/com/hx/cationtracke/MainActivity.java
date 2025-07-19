@@ -77,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_LOG_MESSAGE = "log_message";
     public static final String EXTRA_LOG_TYPE = "log_type";
     
+    // 记录上一次权限状态
+    private boolean lastAllGranted = false;
+    private boolean lastBaseGranted = false;
+    private boolean lastBgGranted = false;
+    private boolean firstPermissionCheck = true;
+    
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(newBase);
@@ -295,6 +301,9 @@ public class MainActivity extends AppCompatActivity {
         
         // 更新状态
         updateStatusDisplay();
+        
+        // 新增：请求服务主动推送一次最新状态
+        sendBroadcast(new Intent("com.hx.cationtracke.REQUEST_STATUS_UPDATE"));
     }
     
     /**
@@ -1504,51 +1513,47 @@ public class MainActivity extends AppCompatActivity {
     private void detectDeviceAndShowTips() {
         try {
             Log.d(TAG, "开始检测设备品牌...");
-            
             DeviceOptimizationHelper.DeviceBrand brand = DeviceOptimizationHelper.detectDeviceBrand();
             String androidVersion = "Android " + Build.VERSION.RELEASE;
             String sdkVersion = "API " + Build.VERSION.SDK_INT;
-            
             String deviceInfo = String.format("📱 %s %s (%s) - %s %s", 
                 Build.MANUFACTURER != null ? Build.MANUFACTURER : "未知",
                 Build.MODEL != null ? Build.MODEL : "未知", 
                 brand.getDisplayName(),
                 androidVersion,
                 sdkVersion);
-            
-            // 显示设备信息，使用标题+内容的格式
             if (logAdapter != null) {
                 logAdapter.addLog("=== 设备信息 ===", "INFO");
                 logAdapter.addLog(deviceInfo, "INFO");
             } else {
                 Log.w(TAG, "logAdapter为null，无法显示设备信息");
             }
-            
-            // 检查是否应该显示设备优化建议
             if (PermissionGuideDialog.shouldShowDeviceOptimization(this)) {
-            // 显示设备优化对话框（延迟3秒，避免与权限申请对话框冲突）
-            new Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    PermissionGuideDialog.showDeviceOptimizationDialog(MainActivity.this, brand);
-                }
-            }, 3000);
+                new Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        PermissionGuideDialog.showDeviceOptimizationDialog(MainActivity.this, brand, new PermissionGuideDialog.OnDismissListener() {
+                            @Override
+                            public void onDismiss() {
+                                showGuidesIfNeeded();
+                            }
+                        });
+                    }
+                }, 3000);
             } else {
                 Log.d(TAG, "用户已选择不再提醒设备优化建议，跳过显示");
                 if (logAdapter != null) {
                     logAdapter.addLog("ℹ️ 用户已选择不再提醒设备优化建议", "INFO");
                 }
+                showGuidesIfNeeded();
             }
-            
-            // 应用设备优化策略
             DeviceOptimizationHelper.applyDeviceOptimization(this);
-            
         } catch (Exception e) {
             Log.e(TAG, "设备检测失败", e);
             if (logAdapter != null) {
                 logAdapter.addLog("❌ 设备检测失败: " + e.getMessage(), "ERROR");
             }
-            // 即使设备检测失败，也不应该导致应用崩溃
+            showGuidesIfNeeded();
         }
     }
     
@@ -1595,35 +1600,30 @@ public class MainActivity extends AppCompatActivity {
      * 检查权限状态并更新UI
      */
     private void checkPermissionStatus() {
-        boolean hasBasicLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) 
-                == PackageManager.PERMISSION_GRANTED;
-        boolean hasCoarseLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) 
-                == PackageManager.PERMISSION_GRANTED;
-        boolean hasBackgroundLocation = true;
-        
-        if (Build.VERSION.SDK_INT >= 29) {
-            hasBackgroundLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) 
-                    == PackageManager.PERMISSION_GRANTED;
+        boolean allGranted = checkAllPermissions(); // 你原有的权限检测逻辑
+        boolean baseGranted = checkBaseLocationPermission();
+        boolean bgGranted = checkBackgroundLocationPermission();
+
+        // 首次进入或权限状态发生变化时写日志
+        if (firstPermissionCheck || allGranted != lastAllGranted) {
+            if (allGranted) {
+                logAdapter.addLog("✅ 所有位置权限已授予", "SUCCESS");
+            }
+            lastAllGranted = allGranted;
         }
-        
-        if (hasBasicLocation && hasCoarseLocation && hasBackgroundLocation) {
-            logAdapter.addLog("✅ 所有位置权限已授予", "SUCCESS");
-            logAdapter.addLog("✅ 基础定位权限: 已授予", "SUCCESS");
-            if (Build.VERSION.SDK_INT >= 29) {
+        if (firstPermissionCheck || baseGranted != lastBaseGranted) {
+            if (baseGranted) {
+                logAdapter.addLog("✅ 基础定位权限: 已授予", "SUCCESS");
+            }
+            lastBaseGranted = baseGranted;
+        }
+        if (firstPermissionCheck || bgGranted != lastBgGranted) {
+            if (bgGranted) {
                 logAdapter.addLog("✅ 后台定位权限: 已授予", "SUCCESS");
             }
-        } else {
-            logAdapter.addLog("❌ 位置权限不完整", "ERROR");
-            if (!hasBasicLocation) {
-                logAdapter.addLog("❌ 基础定位权限: 未授予", "ERROR");
-            }
-            if (!hasCoarseLocation) {
-                logAdapter.addLog("❌ 粗略定位权限: 未授予", "ERROR");
-            }
-            if (Build.VERSION.SDK_INT >= 29 && !hasBackgroundLocation) {
-                logAdapter.addLog("❌ 后台定位权限: 未授予", "ERROR");
-            }
+            lastBgGranted = bgGranted;
         }
+        firstPermissionCheck = false;
     }
 
     /**
@@ -1842,6 +1842,86 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "设置透明状态栏失败", e);
             // 失败时不影响应用正常运行
+        }
+    }
+
+    // 权限检测工具方法
+    private boolean checkAllPermissions() {
+        boolean fine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean coarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean bg = true;
+        if (Build.VERSION.SDK_INT >= 29) {
+            bg = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        }
+        boolean notify = true;
+        if (Build.VERSION.SDK_INT >= 33) {
+            notify = ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS") == PackageManager.PERMISSION_GRANTED;
+        }
+        return fine && coarse && bg && notify;
+    }
+    private boolean checkBaseLocationPermission() {
+        boolean fine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean coarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        return fine && coarse;
+    }
+    private boolean checkBackgroundLocationPermission() {
+        if (Build.VERSION.SDK_INT >= 29) {
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
+    }
+
+    // 串联弹框引导（弹框全部关闭后再自动申请权限）
+    private void showGuidesIfNeeded() {
+        if (isConfigMissing()) {
+            showConfigMissingDialog(() -> {
+                // 配置弹框关闭后再申请权限
+                requestPermissionsIfNeededAfterGuides();
+            });
+        } else {
+            // 没有配置弹框，直接申请权限
+            requestPermissionsIfNeededAfterGuides();
+        }
+    }
+
+    // 判断配置是否缺失
+    private boolean isConfigMissing() {
+        try {
+            DataBaseOpenHelper dataBaseOpenHelper = new DataBaseOpenHelper(this);
+            SQLiteDatabase db = dataBaseOpenHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("select * from config", null);
+            boolean missing = cursor.getCount() == 0;
+            cursor.close();
+            db.close();
+            return missing;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+    // 判断权限是否缺失
+    private boolean isPermissionMissing() {
+        return !checkAllPermissions();
+    }
+    // 配置缺失弹框（点击去填写先关闭弹框再切换tab）
+    private void showConfigMissingDialog(final Runnable next) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("配置缺失")
+            .setMessage("请填写 Webhook URL 和更新周期后点击开始定位。")
+            .setCancelable(false)
+            .setPositiveButton("去填写", (dialog, which) -> {
+                dialog.dismiss();
+                switchToConfigTab();
+            })
+            .setOnDismissListener(dialog -> {
+                // 不再自动弹下一个弹框
+            })
+            .show();
+    }
+    // 弹框全部关闭后再自动申请权限
+    private void requestPermissionsIfNeededAfterGuides() {
+        if (isPermissionMissing()) {
+            checkAndRequestPermissions();
         }
     }
 }
