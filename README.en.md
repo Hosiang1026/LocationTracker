@@ -11,7 +11,7 @@
 [![Phone UI](https://img.shields.io/badge/Phone%20UI-Single%20Panel-brightgreen.svg)](https://haoxiang.eu.org/ui/MOBILE_UI_PREVIEW)
 [![Tablet UI](https://img.shields.io/badge/Tablet%20UI-Optimized%20for%20Large%20Screen-blue.svg)](https://haoxiang.eu.org/ui/TABLET_UI_PREVIEW)
 
-> 📱 **Smart Location Reporting App** - Send Android device location data to Home Assistant or other servers via HTTP Webhook
+> 📱 **LocationTracker App** - Send Android device location data to Home Assistant or other servers via HTTP Webhook
 
 ## 🚨 Important Notice
 
