@@ -1,4 +1,4 @@
-package com.hx.cationtracke;
+package com.ljs.locationtracker;
 
 import android.app.Service;
 import android.content.Intent;

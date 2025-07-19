@@ -1,4 +1,4 @@
-package com.hx.cationtracke;
+package com.ljs.locationtracker;
 
 import android.content.Context;
 import android.os.Build;
@@ -200,7 +200,7 @@ public class DeviceOptimizationHelper {
     private static void applyXiaomiOptimization(Context context) {
         try {
             Log.d(TAG, "应用小米设备优化策略");
-            // 小米设备特殊优化逻辑
+            // 可在此处补充新版本对小米自启动、后台弹窗、电池优化等引导
         } catch (Exception e) {
             Log.e(TAG, "小米设备优化失败", e);
         }
@@ -212,7 +212,7 @@ public class DeviceOptimizationHelper {
     private static void applyOppoOptimization(Context context) {
         try {
             Log.d(TAG, "应用OPPO设备优化策略");
-            // OPPO设备特殊优化逻辑
+            // 可在此处补充新版本对OPPO自启动、后台弹窗、电池优化等引导
         } catch (Exception e) {
             Log.e(TAG, "OPPO设备优化失败", e);
         }
@@ -224,7 +224,7 @@ public class DeviceOptimizationHelper {
     private static void applyVivoOptimization(Context context) {
         try {
             Log.d(TAG, "应用vivo设备优化策略");
-            // vivo设备特殊优化逻辑
+            // 可在此处补充新版本对vivo自启动、后台弹窗、电池优化等引导
         } catch (Exception e) {
             Log.e(TAG, "vivo设备优化失败", e);
         }

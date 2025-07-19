@@ -1,4 +1,4 @@
-package com.hx.cationtracke;
+package com.ljs.locationtracker;
 
 import android.util.AttributeSet;
 import android.view.MotionEvent;

@@ -1,4 +1,4 @@
-package com.hx.cationtracke;
+package com.ljs.locationtracker;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -53,7 +53,10 @@ public class LocationForcegroundService extends Service {
     public void showNotify(){
         //调用这个方法把服务设置成前台服务
         if(ltmService.getNotificationEnable() == 1) {
-            startForeground(Utils.NOTIFY_ID, Utils.buildNotification(getApplicationContext(), batteryLevel, latitude, longitude, reportCount, timeSinceLastReport));
+            Notification notification = Utils.buildNotification(getApplicationContext(), batteryLevel, latitude, longitude, reportCount, timeSinceLastReport);
+            if (notification != null) {
+                startForeground(Utils.NOTIFY_ID, notification);
+            }
         }
     }
     

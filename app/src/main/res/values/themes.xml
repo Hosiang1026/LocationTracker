@@ -9,15 +9,13 @@
         <item name="colorSecondary">@color/success_green</item>
         <item name="colorSecondaryVariant">@color/success_green</item>
         <item name="colorOnSecondary">@color/white</item>
-        <!-- Status bar color - 设置为透明 -->
-        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/dark_gray</item>
         <!-- Window background -->
         <item name="android:windowBackground">@color/white</item>
         <!-- 确保兼容性 -->
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-        <!-- 设置状态栏图标为深色（浅色背景） -->
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- 按钮样式配置 -->
         <item name="android:buttonStyle">@style/CustomButtonStyle</item>
         <item name="buttonStyle">@style/CustomButtonStyle</item>
@@ -33,8 +31,8 @@
         <item name="colorSecondary">@color/success_green</item>
         <item name="colorSecondaryVariant">@color/success_green</item>
         <item name="colorOnSecondary">@color/white</item>
-        <!-- Status bar color - 设置为透明 -->
-        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
+        <!-- Status bar color - 使用更深的颜色 -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/dark_gray</item>
         <!-- Window background -->
         <item name="android:windowBackground">@color/white</item>
         <!-- 设置状态栏图标为浅色 -->

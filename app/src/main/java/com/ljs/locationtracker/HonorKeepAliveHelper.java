@@ -1,4 +1,4 @@
-package com.hx.cationtracke;
+package com.ljs.locationtracker;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -100,7 +100,7 @@ public class HonorKeepAliveHelper {
      */
     private static void checkAndRestartService(Context context) {
         try {
-            if (!isServiceRunning(context, "com.hx.cationtracke.ltmService")) {
+            if (!isServiceRunning(context, "com.ljs.locationtracker.ltmService")) {
                 Log.d(TAG, "检测到服务未运行，正在重启...");
                 Intent serviceIntent = new Intent(context, ltmService.class);
                 context.startService(serviceIntent);
