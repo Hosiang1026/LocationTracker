@@ -6,8 +6,6 @@
 
 # LocationTracker
 
-# Smart Location Reporting
-
 [![Android Version](https://img.shields.io/badge/Android-4.0+-green.svg)](https://developer.android.com/about/versions/android-4.0)
 [![Version](https://img.shields.io/badge/Version-V2.1.6-blue.svg)](https://github.com/Hosiang1026/LocationTracker/releases)
 [![Phone UI](https://img.shields.io/badge/Phone%20UI-Single%20Panel-brightgreen.svg)](https://haoxiang.eu.org/ui/MOBILE_UI_PREVIEW)

@@ -4,8 +4,6 @@
 
 <br>
 
-# LocationTracker
-
 # 智能位置上报
 
 [![Android版本](https://img.shields.io/badge/Android-4.0+-green.svg)](https://developer.android.com/about/versions/android-4.0)
