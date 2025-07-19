@@ -574,9 +574,8 @@ MIT License, see LICENSE.
 - Notification content intelligently displays "Getting...", "Locating...", or actual values based on battery/location state
 - Other minor UX improvements
 
-### v2.1.5 (archived)
+### v2.1.5
 - 🧹 **Code Cleanup**: Removed all MQTT-related code and configurations
-- 📱 **Version Update**: Upgraded from V2.1.4 to V2.1.5
 - 🔧 **Configuration Optimization**: Simplified build configuration, removed unused dependencies
 - 📝 **Documentation Update**: Updated version number and feature descriptions
 - 🛠️ **ProGuard Optimization**: Updated package name reference rules
@@ -588,3 +587,71 @@ MIT License, see LICENSE.
 - Global exception capture, crash logs saved locally, user-friendly error prompts
 - Stricter input validation for Webhook URL, interval, etc.
 - Other minor UX improvements and bug fixes
+
+### v2.1.4
+- ✨ **Transparent Status Bar**: Immersive status bar effect, status bar above the title becomes transparent
+- ✨ **Smart Compatibility**: Automatically uses the appropriate transparency scheme for different Android versions
+  - Android 5.0+ (API 21+): Fully transparent status bar
+  - Android 4.4-4.4W (API 19-20): Semi-transparent status bar
+  - Android 4.0-4.3 (API 14-18): Ignored, keep original
+- 🛠️ **Technical Implementation**: Layout adaptation and code implementation, ensuring backward compatibility
+- 🛠️ **Exception Handling**: If setting transparent status bar fails, app runs normally
+
+### v2.1.3
+- 🚨 **Important Fixes & Optimizations**: Thoroughly fixed theme compatibility crashes, ensuring stable operation on all devices
+- 🛠️ **Smart Theme Mechanism**: Automatically selects the optimal AppCompat theme based on system state (power saving, night mode, high contrast, etc.)
+- 🛠️ **Multi-layer Protection**: Sets compatible theme in Application, Activity's attachBaseContext and onCreate, ensuring 100% crash-free
+- 🛠️ **Theme Validation**: Verifies theme after setting, fallback if failed
+- ✨ **Crash Log Management Optimization**: Fixed dialog info not updating after clearing crash logs, added immediate clear function
+- ✨ **Screen State Adaptive Interval**: Shortens location interval when screen is off, increasing wake-up probability
+- ✨ **Data Deduplication**: Only reports when location data changes, reducing invalid reports
+- ✨ **Low Battery Smart Protection**: Pauses reporting below 10% battery, auto-resumes when battery recovers
+- ✨ **Enhanced WakeLock & Keep-alive**: Stronger WakeLock strategy for background operation
+- ✨ **Service Auto-restart**: Auto-restarts via broadcast if killed by system
+- ✨ **Boot Auto-start**: Auto-starts location reporting after system boot
+- ✨ **Keep-alive Timer & Status Check**: Random keep-alive check between 60s and configured interval
+- ✨ **Battery State Monitoring & Recovery**: Real-time battery and power save mode monitoring
+- 🔧 **API Compatibility Fixes**: Ensures stable operation on all Android versions
+- 🔧 **Network & Error Handling**: Improved exception capture and error recovery
+- 🔧 **Status Broadcast & Log System**: Improved status update and log broadcast
+- 🔒 **Enhanced Permission & Input Validation**: Stricter permission and input checks
+- 📱 **UX & UI Improvements**: Optimized UI and user experience
+
+### v2.1.2
+- 🚨 **Important Fix**: Fixed issue where reporting interval auto-adjusts when screen state changes
+- ✨ **Data Deduplication**: Only reports when location data changes
+- 🔧 **API Compatibility**: Fixed API level compatibility issues
+- 🔧 **Network Optimization**: Improved network requests and error handling
+- 🔧 **Log System**: Optimized status broadcast and log system
+- 🔒 **Security Enhancement**: Enhanced permission checks and input validation
+- 📱 **UI Optimization**: Improved user experience and UI display
+
+### v2.1.1
+- ✨ Added low battery smart protection
+- ✨ Enhanced WakeLock and keep-alive strategy
+- ✨ Improved service auto-restart
+- ✨ Improved boot auto-start
+- ✨ Added keep-alive timer and status check
+- ✨ Optimized battery state monitoring and recovery
+- 🔧 Fixed API compatibility issues
+- 🔧 Improved network requests and error handling
+- 🔧 Optimized status broadcast and log system
+- 🔒 Enhanced permission checks and input validation
+- 📱 Improved user experience and UI display
+- ⚠️ **Note**: This version has an issue where reporting interval auto-adjusts when screen state changes, fixed in v2.1.2
+
+### v2.0.0
+- ✨ Added low battery protection
+- ✨ Enhanced WakeLock mechanism
+- ✨ Optimized screen state monitoring
+- ✨ Improved network retry mechanism
+- ✨ Improved log system
+- 🔒 Fixed SQL injection vulnerability
+- 🔒 Enhanced input validation
+- 🔒 Improved error handling
+
+### v1.0.0
+- 🎉 Initial release
+- 📍 Basic location reporting
+- 🌐 HTTP Webhook support
+- 📱 Android 4.0+ compatibility
