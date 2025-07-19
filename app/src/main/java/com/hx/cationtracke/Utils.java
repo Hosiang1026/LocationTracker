@@ -46,6 +46,14 @@ public class Utils {
             Notification notification = null;
             
             String channelId = mContext.getPackageName();
+            boolean silent = false;
+            // 判断是否需要静默通知
+            try {
+                int notificationEnable = com.hx.cationtracke.ltmService.getNotificationEnable();
+                if (android.os.Build.VERSION.SDK_INT >= 26 && notificationEnable != 1) {
+                    silent = true;
+                }
+            } catch (Throwable t) {}
             if (android.os.Build.VERSION.SDK_INT >= 26) {
                 //Android O上对Notification进行了修改，如果设置的targetSDKVersion>=26建议使用此种方式创建通知栏
                 if (null == notificationManager) {
@@ -55,20 +63,22 @@ public class Utils {
                         return null;
                     }
                 }
-                if (!isCreatedChannel) {
-                    try {
-                        NotificationChannel notificationChannel = new NotificationChannel(channelId,
-                                NOTIFICATION_CHANNEL_NAME,
-                                NotificationManager.IMPORTANCE_DEFAULT);
-                        notificationChannel.enableLights(true);//是否在桌面icon右上角展示小圆点
-                        notificationChannel.setLightColor(Color.BLUE); //小圆点颜色
-                        notificationChannel.setShowBadge(true); //是否在久按桌面图标时显示此渠道的通知
-                        notificationManager.createNotificationChannel(notificationChannel);
-                        isCreatedChannel = true;
-                    } catch (Exception e) {
-                        Log.e("Utils", "创建通知渠道失败", e);
-                        return null;
+                // 每次都重建渠道，保证切换立即生效
+                try {
+                    NotificationChannel notificationChannel = new NotificationChannel(channelId,
+                            NOTIFICATION_CHANNEL_NAME,
+                            silent ? NotificationManager.IMPORTANCE_MIN : NotificationManager.IMPORTANCE_DEFAULT);
+                    notificationChannel.enableLights(true);
+                    notificationChannel.setLightColor(Color.BLUE);
+                    notificationChannel.setShowBadge(true);
+                    if (silent) {
+                        notificationChannel.setSound(null, null);
+                        notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
                     }
+                    notificationManager.createNotificationChannel(notificationChannel);
+                } catch (Exception e) {
+                    Log.e("Utils", "创建通知渠道失败", e);
+                    return null;
                 }
                 builder = new NotificationCompat.Builder(mContext, channelId);
             } else {
@@ -78,13 +88,31 @@ public class Utils {
 
             // 构建通知内容 - 显示当前上报时间
             String currentTimeStr = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(new java.util.Date());
-            String contentText = String.format("电量:%d%% | 位置:%.4f,%.4f | 当前上报时间:%s", 
-                batteryLevel, latitude, longitude, currentTimeStr);
+            String contentText;
+            boolean hasBattery = batteryLevel > 0;
+            boolean hasLocation = !(latitude == 0.0 && longitude == 0.0);
+
+            if (!hasBattery && !hasLocation) {
+                contentText = "电量:获取中 | 位置:定位中 | 当前上报时间:" + currentTimeStr;
+            } else if (hasBattery && !hasLocation) {
+                contentText = String.format("电量:%d%% | 位置:定位中 | 当前上报时间:%s", batteryLevel, currentTimeStr);
+            } else if (!hasBattery && hasLocation) {
+                contentText = String.format("电量:获取中 | 位置:%.4f,%.4f | 当前上报时间:%s", latitude, longitude, currentTimeStr);
+            } else {
+                contentText = String.format("电量:%d%% | 位置:%.4f,%.4f | 当前上报时间:%s", batteryLevel, latitude, longitude, currentTimeStr);
+            }
 
             // 使用drawable资源作为通知图标，确保在Android 8.0+上正确显示
             builder.setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentText(contentText)  // 只设置内容，不设置标题
                     .setWhen(System.currentTimeMillis());
+
+            if (silent && android.os.Build.VERSION.SDK_INT >= 26) {
+                builder.setSound(null);
+                builder.setPriority(NotificationCompat.PRIORITY_MIN);
+                builder.setVibrate(new long[]{});
+                builder.setDefaults(0);
+            }
 
             notification = builder.build();
             return notification;

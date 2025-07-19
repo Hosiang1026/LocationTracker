@@ -4,13 +4,14 @@
 
 <br>
 
+# LocationTracker
+
 # 智能位置上报
 
 [![Android版本](https://img.shields.io/badge/Android-4.0+-green.svg)](https://developer.android.com/about/versions/android-4.0)
-[![版本号](https://img.shields.io/badge/版本-V2.1.5-blue.svg)](https://github.com/your-repo/LocationTracker/releases)
+[![版本号](https://img.shields.io/badge/版本-V2.1.6-blue.svg)](https://github.com/Hosiang1026/LocationTracker/releases)
 [![手机界面](https://img.shields.io/badge/手机界面-单面板设计-brightgreen.svg)](https://haoxiang.eu.org/ui/MOBILE_UI_PREVIEW)
 [![平板界面](https://img.shields.io/badge/平板界面-大屏优化-blue.svg)](https://haoxiang.eu.org/ui/TABLET_UI_PREVIEW)
-[![主题兼容](https://img.shields.io/badge/主题-智能兼容-orange.svg)](https://github.com/your-repo/LocationTracker#-主题兼容性修复详情)
 
 > 📱 **智能位置上报应用** - 通过HTTP Webhook将安卓设备位置数据发送到Home Assistant或其他服务器
 
@@ -47,6 +48,7 @@
 - 🖥️ **多分辨率适配**: 支持不同屏幕尺寸
 - 🔧 **设备优化指导**: 内置各品牌设备优化设置指导
 - 🔒 **SQL注入防护**: 使用参数化查询防止SQL注入
+- 🖱️ **主要操作有 UI 反馈**
 
 ## 🎨 界面预览
 
@@ -77,7 +79,7 @@
 - **📊 监控面板**: 查看连接状态、定位状态、电池电量、上报次数
 - **⚙️ 配置面板**: 设置Webhook URL、上报间隔、通知开关
 - **📱 底部导航**: 监控和配置面板切换
-- **🛠️ 日志管理**: 点击"🛠️ 日志"查看崩溃日志
+- **��️ 日志管理**: 点击"🛠️ 日志"查看崩溃日志
 - **🔧 优化设置**: 点击"优化设置"获取设备优化建议
 
 ### 日常使用
@@ -562,33 +564,35 @@ WEBHOOK_URL=你的webhook地址
 
 ## 📝 更新日志
 
-### V2.1.5
+### v2.1.6（2024-07-19）
+- 定位上报策略优化：白天无论静止/运动/息屏都持续上报，夜间静止暂停上报
+- 静止/运动判定日志优化，distance、speed、staticCount 实时可查
+- WorkManager 定时任务频繁重启问题修复，静止/运动判定与日志一致
+- APP前后台切换时页面状态自动刷新，onResume 主动拉取服务状态
+- 权限日志只在首次进入或权限变更时写入，避免刷屏
+- 首次进入APP时所有引导弹框关闭后再自动申请权限，体验更佳
+- 配置弹框点击“去填写”时弹框立即消失，先关闭弹框再切换tab
+- 权限弹框、配置弹框、设备优化建议弹框顺序及交互优化
+- 通知内容优化：位置未获取时显示“定位中...”，电量未获取时显示“获取中”
+- 支持静默通知，配置面板关闭通知时 Android 8.0+ 不打扰用户，开启时立即切换为正常通知
+- 通知内容根据电量/经纬度状态智能显示“获取中”“定位中...”或具体数值
+- 其他细节体验优化
+
+### v2.1.5
 - 🧹 **代码清理**: 移除所有MQTT相关代码和配置
-- 📱 **版本更新**: 从V2.1.4升级到V2.1.5
 - 🔧 **配置优化**: 简化构建配置，移除无用依赖
 - 📝 **文档更新**: 更新版本号和功能说明
 - 🛠️ **ProGuard优化**: 更新包名引用规则
 - 全面优化 UI 细节，提升用户体验：
   - Webhook/周期输入框增加详细提示（hint），说明格式和范围
   - 按钮防抖处理，防止多次点击"开始"导致重复启动
-  - 所有输入和操作错误均有明确 Toast 提示
   - 服务启动/停止、上报成功/失败等操作有明显 UI 反馈
-  - 夜间模式/高对比度适配，保证不同主题下界面清晰
   - 多分辨率适配（sw400dp、sw600dp、sw720dp、sw800dp、sw900dp），所有优化同步到各屏幕布局
 - 全局异常捕获，防止App崩溃并本地保存崩溃日志，异常时友好提示用户
 - Webhook URL、上报周期等输入校验更严格，防止无效配置
 - 其它细节体验优化和Bug修复
 
-### 清理内容
-- ❌ 移除MQTT_USERNAME配置
-- ❌ 移除MQTT_PASSWORD配置
-- ❌ 移除CLIENT_ID配置
-- ❌ 移除TOPIC1变量
-- ❌ 移除clientid、userName、passWord变量
-- ❌ 移除MQTT相关字符串资源
-- ✅ 更新ProGuard规则包名引用
-
-### V2.1.4
+### v2.1.4
 - ✨ **透明状态栏功能**: 实现沉浸式状态栏效果，标题上方的状态栏变为透明
 - ✨ **智能兼容性**: 不同Android版本自动使用对应的透明方案
   - Android 5.0+ (API 21+): 完全透明状态栏
@@ -655,6 +659,10 @@ WEBHOOK_URL=你的webhook地址
 - 📍 基础位置上报功能
 - 🌐 HTTP Webhook支持
 - 📱 Android 4.0+兼容
+
+## ⚠️ 已知问题 / TODO
+- 部分输入或操作错误（如配置面板输入错误）仅在日志区提示，未全部弹出 Toast 友好提示，后续可完善。
+- 暂未支持夜间模式/高对比度/多主题自动适配，后续可根据需求完善。
 
 
 

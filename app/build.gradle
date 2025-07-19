@@ -20,7 +20,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 33
         versionCode 215
-        versionName "2.1.5"
+        versionName "2.1.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CONFIG_URL", '"' + (localProps["CONFIG_URL"] ?: "https://nas.haoxiang.eu.org/locationtracker/api/config") + '"'
